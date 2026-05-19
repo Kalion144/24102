@@ -1,86 +1,91 @@
-import {
-  mysqlTable,
-  int,
-  varchar,
-  text,
-  decimal,
-  timestamp,
-  mysqlEnum,
-  float,
-} from "drizzle-orm/mysql-core";
+import { sqliteTable, int, text, real } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
-export const userTypeEnum = mysqlEnum("tipo", ["CLIENTE", "PROFISSIONAL"]);
-
-export const users = mysqlTable("users", {
-  id: int("id").primaryKey().autoincrement(),
-  nome: varchar("nome", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull().unique(),
-  senha_hash: varchar("senha_hash", { length: 255 }).notNull(),
-  tipo: userTypeEnum.notNull(),
-  foto: varchar("foto", { length: 255 }),
-  created_at: timestamp("created_at").defaultNow().notNull(),
+export const users = sqliteTable("users", {
+  id: int("id").primaryKey({ autoIncrement: true }),
+  nome: text("nome").notNull(),
+  email: text("email").notNull().unique(),
+  senha_hash: text("senha_hash").notNull(),
+  tipo: text("tipo").notNull().$type<"CLIENTE" | "PROFISSIONAL">(),
+  foto: text("foto"),
+  created_at: int("created_at", { mode: "timestamp_ms" })
+    .notNull()
+    .$defaultFn(() => Date.now()),
 });
 
-export const professionalProfiles = mysqlTable("professional_profiles", {
-  id: int("id").primaryKey().autoincrement(),
+export const professionalProfiles = sqliteTable("professional_profiles", {
+  id: int("id").primaryKey({ autoIncrement: true }),
   user_id: int("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   descricao: text("descricao"),
   experiencia: int("experiencia"),
-  cidade: varchar("cidade", { length: 255 }).notNull(),
-  valor_hora: decimal("valor_hora", { precision: 10, scale: 2 }),
-  media_estrelas: float("media_estrelas").default(0),
+  cidade: text("cidade").notNull(),
+  valor_hora: real("valor_hora"),
+  media_estrelas: real("media_estrelas").default(0),
   total_avaliacoes: int("total_avaliacoes").default(0),
-  telefone: varchar("telefone", { length: 20 }),
+  telefone: text("telefone"),
 });
 
-export const professionalServices = mysqlTable("professional_services", {
-  id: int("id").primaryKey().autoincrement(),
+export const professionalServices = sqliteTable("professional_services", {
+  id: int("id").primaryKey({ autoIncrement: true }),
   professional_profile_id: int("professional_profile_id")
     .notNull()
     .references(() => professionalProfiles.id, { onDelete: "cascade" }),
-  categoria: varchar("categoria", { length: 255 }).notNull(),
-  subcategoria: varchar("subcategoria", { length: 255 }),
+  categoria: text("categoria").notNull(),
+  subcategoria: text("subcategoria"),
 });
 
-export const proposalStatusEnum = mysqlEnum("status", [
-  "PENDENTE",
-  "ACEITA",
-  "RECUSADA",
-  "CANCELADA",
-  "EM_ANDAMENTO",
-  "FINALIZADA",
-  "AVALIADA",
-]);
-
-export const proposals = mysqlTable("proposals", {
-  id: int("id").primaryKey().autoincrement(),
+export const proposals = sqliteTable("proposals", {
+  id: int("id").primaryKey({ autoIncrement: true }),
   client_id: int("client_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  titulo: varchar("titulo", { length: 255 }).notNull(),
+  titulo: text("titulo").notNull(),
   descricao: text("descricao"),
-  valor: decimal("valor", { precision: 10, scale: 2 }),
-  prazo: varchar("prazo", { length: 255 }),
-  status: proposalStatusEnum.default("PENDENTE"),
-  created_at: timestamp("created_at").defaultNow().notNull(),
+  valor: real("valor"),
+  prazo: text("prazo"),
+  status: text("status")
+    .notNull()
+    .$type<
+      | "PENDENTE"
+      | "ACEITA"
+      | "RECUSADA"
+      | "CANCELADA"
+      | "EM_ANDAMENTO"
+      | "FINALIZADA"
+      | "AVALIADA"
+    >()
+    .default("PENDENTE"),
+  created_at: int("created_at", { mode: "timestamp_ms" })
+    .notNull()
+    .$defaultFn(() => Date.now()),
 });
 
-export const proposalProfessionals = mysqlTable("proposal_professionals", {
-  id: int("id").primaryKey().autoincrement(),
+export const proposalProfessionals = sqliteTable("proposal_professionals", {
+  id: int("id").primaryKey({ autoIncrement: true }),
   proposal_id: int("proposal_id")
     .notNull()
     .references(() => proposals.id, { onDelete: "cascade" }),
   professional_id: int("professional_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  status: proposalStatusEnum.default("PENDENTE"),
+  status: text("status")
+    .notNull()
+    .$type<
+      | "PENDENTE"
+      | "ACEITA"
+      | "RECUSADA"
+      | "CANCELADA"
+      | "EM_ANDAMENTO"
+      | "FINALIZADA"
+      | "AVALIADA"
+    >()
+    .default("PENDENTE"),
 });
 
-export const ratings = mysqlTable("ratings", {
-  id: int("id").primaryKey().autoincrement(),
+export const ratings = sqliteTable("ratings", {
+  id: int("id").primaryKey({ autoIncrement: true }),
   proposal_professional_id: int("proposal_professional_id")
     .notNull()
     .references(() => proposalProfessionals.id, { onDelete: "cascade" }),
@@ -92,7 +97,9 @@ export const ratings = mysqlTable("ratings", {
     .references(() => users.id, { onDelete: "cascade" }),
   estrelas: int("estrelas").notNull(),
   comentario: text("comentario"),
-  created_at: timestamp("created_at").defaultNow().notNull(),
+  created_at: int("created_at", { mode: "timestamp_ms" })
+    .notNull()
+    .$defaultFn(() => Date.now()),
 });
 
 export const usersRelations = relations(users, ({ one, many }) => ({

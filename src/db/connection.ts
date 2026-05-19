@@ -1,82 +1,43 @@
-import 'dotenv/config'
-
-import mysql from 'mysql2/promise'
-
-import { drizzle }
-from 'drizzle-orm/mysql2'
+import "dotenv/config";
+import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
 
 /* =====================================================
    ENV VARIABLES
 ===================================================== */
 
-const DB_HOST: string = process.env.DB_HOST || 'localhost'
+const TURSO_DATABASE_URL = process.env.TURSO_DATABASE_URL;
+const TURSO_AUTH_TOKEN = process.env.TURSO_AUTH_TOKEN;
 
-const DB_PORT: number = Number(
-  process.env.DB_PORT || 3307
-)
-
-const DB_USER: string = process.env.DB_USER || 'root'
-
-const DB_PASSWORD: string =
-  process.env.DB_PASSWORD || 'catolica'
-
-const DB_NAME: string =
-  process.env.DB_NAME || 'freelancer_obras'
+if (!TURSO_DATABASE_URL) {
+  throw new Error("TURSO_DATABASE_URL is not defined in environment variables");
+}
 
 /* =====================================================
-   MYSQL POOL
+   TURSO CLIENT
 ===================================================== */
 
-const pool = mysql.createPool({
-
-  host: DB_HOST,
-
-  port: DB_PORT,
-
-  user: DB_USER,
-
-  password: DB_PASSWORD,
-
-  database: DB_NAME,
-
-  waitForConnections: true,
-
-  connectionLimit: 10,
-
-  queueLimit: 0,
-
-})
+const client = createClient({
+  url: TURSO_DATABASE_URL,
+  authToken: TURSO_AUTH_TOKEN,
+});
 
 /* =====================================================
    DRIZZLE ORM
 ===================================================== */
 
-export const db = drizzle(pool)
+export const db = drizzle(client);
 
 /* =====================================================
    TEST DATABASE
 ===================================================== */
 
 export async function conectarBanco() {
-
   try {
-
-    const connection = await pool.getConnection()
-
-    console.log(
-      '✅ Banco conectado com sucesso'
-    )
-
-    connection.release()
-
+    await client.execute("SELECT 1");
+    console.log("✅ Banco conectado com sucesso (Turso)");
   } catch (error) {
-
-    console.error(
-      '❌ Erro ao conectar no banco'
-    )
-
-    console.error(error)
-
+    console.error("❌ Erro ao conectar no banco");
+    console.error(error);
   }
-
 }
