@@ -58,7 +58,7 @@ export class RatingController {
           estrelas,
           comentario,
         })
-        .$returningId()
+        .returning({ id: ratings.id })
 
       const [profile] = await db
         .select()

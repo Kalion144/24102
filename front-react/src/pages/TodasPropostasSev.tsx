@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom'; // Import necessário para o link dinâmico
+import { Link, useNavigate } from 'react-router-dom'; // Import necessário para o link dinâmico
 
 const TodasPropostasSev = () => {
+  const navigate = useNavigate();
   const PROPOSTAS_KEY = 'minhasPropostas';
   const [propostas, setPropostas] = useState([]);
   const [currentFilter, setCurrentFilter] = useState('all');
@@ -45,36 +46,39 @@ const TodasPropostasSev = () => {
         {
           id: Date.now() + 1,
           servicoId: 'servico_exemplo_1', // ID fictício para exemplo
-          cliente: "Empresa Sabor & Vida",
-          servico: "Instalação de quadro de luz",
-          mensagem: "Olá! Sou eletricista especializado, posso realizar a instalação ainda hoje com garantia. Tenho 8 anos de experiência em quadros industriais. Orçamento detalhado.",
-          valor: "R$ 1.200,00",
+          cliente: 'Empresa Sabor & Vida',
+          servico: 'Instalação de quadro de luz',
+          mensagem:
+            'Olá! Sou eletricista especializado, posso realizar a instalação ainda hoje com garantia. Tenho 8 anos de experiência em quadros industriais. Orçamento detalhado.',
+          valor: 'R$ 1.200,00',
           data: new Date(Date.now() - 86400000).toISOString(),
-          status: "aguardando",
-          profissional: "João Elétrica"
+          status: 'aguardando',
+          profissional: 'João Elétrica',
         },
         {
           id: Date.now() + 2,
           servicoId: 'servico_exemplo_2',
-          cliente: "Mercado Bom Preço",
-          servico: "Manutenção elétrica geral",
-          mensagem: "Boa tarde! Posso fazer uma vistoria completa e substituir disjuntores com segurança. Valor justo e nota fiscal.",
-          valor: "Negociável",
+          cliente: 'Mercado Bom Preço',
+          servico: 'Manutenção elétrica geral',
+          mensagem:
+            'Boa tarde! Posso fazer uma vistoria completa e substituir disjuntores com segurança. Valor justo e nota fiscal.',
+          valor: 'Negociável',
           data: new Date(Date.now() - 172800000).toISOString(),
-          status: "aceita",
-          profissional: "João Elétrica"
+          status: 'aceita',
+          profissional: 'João Elétrica',
         },
         {
           id: Date.now() + 3,
           servicoId: 'servico_exemplo_3',
-          cliente: "Padaria Pão Quente",
-          servico: "Troca de chuveiro industrial",
-          mensagem: "Disponibilidade imediata para troca do chuveiro. Preço especial para primeiro serviço.",
-          valor: "R$ 350,00",
+          cliente: 'Padaria Pão Quente',
+          servico: 'Troca de chuveiro industrial',
+          mensagem:
+            'Disponibilidade imediata para troca do chuveiro. Preço especial para primeiro serviço.',
+          valor: 'R$ 350,00',
           data: new Date(Date.now() - 259200000).toISOString(),
-          status: "recusada",
-          profissional: "João Elétrica"
-        }
+          status: 'recusada',
+          profissional: 'João Elétrica',
+        },
       ];
       savePropostas(examplePropostas);
       return examplePropostas;
@@ -87,7 +91,7 @@ const TodasPropostasSev = () => {
     setPropostas(data);
   }, [seedExamplePropostas]);
 
-  const filteredPropostas = propostas.filter(proposta => {
+  const filteredPropostas = propostas.filter((proposta) => {
     if (currentFilter === 'all') return true;
     if (currentFilter === 'aguardando') {
       return proposta.status === 'aguardando' || proposta.status === 'enviada';
@@ -99,7 +103,7 @@ const TodasPropostasSev = () => {
 
   const escapeHtml = (str) => {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
+    return str.replace(/[&<>]/g, function (m) {
       if (m === '&') return '&amp;';
       if (m === '<') return '&lt;';
       if (m === '>') return '&gt;';
@@ -112,13 +116,18 @@ const TodasPropostasSev = () => {
       return (
         <div className="empty-state" id="emptyState">
           <span>📭</span>
-          <p style={{ marginTop: '12px' }}>Você ainda não enviou nenhuma proposta.</p>
-          <p style={{ fontSize: '0.8rem' }}>Vá até um serviço e clique em "Tenho interesse" para criar sua primeira proposta.</p>
+          <p style={{ marginTop: '12px' }}>
+            Você ainda não enviou nenhuma proposta.
+          </p>
+          <p style={{ fontSize: '0.8rem' }}>
+            Vá até um serviço e clique em "Tenho interesse" para criar sua
+            primeira proposta.
+          </p>
         </div>
       );
     }
 
-    return filteredPropostas.map(proposta => {
+    return filteredPropostas.map((proposta) => {
       let statusClass = '';
       let statusText = '';
       if (proposta.status === 'aguardando' || proposta.status === 'enviada') {
@@ -141,31 +150,69 @@ const TodasPropostasSev = () => {
       }
 
       const dataObj = new Date(proposta.data);
-      const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const dataFormatada =
+        dataObj.toLocaleDateString('pt-BR') +
+        ' às ' +
+        dataObj.toLocaleTimeString('pt-BR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
 
       return (
         <div className="proposal-card" key={proposta.id} data-id={proposta.id}>
           <div className="card-header">
             <div className="client-info">
               <h3>{escapeHtml(proposta.cliente || 'Cliente')}</h3>
-              <div className="service-tag">🔧 {escapeHtml(proposta.servico || 'Serviço genérico')}</div>
+              <div className="service-tag">
+                🔧 {escapeHtml(proposta.servico || 'Serviço genérico')}
+              </div>
             </div>
             <div className={`status-badge ${statusClass}`}>{statusText}</div>
           </div>
           <div className="proposal-details">
             <div className="proposal-message">
-              <strong>💬 Mensagem:</strong><br />
-              {escapeHtml(proposta.mensagem.length > 150 ? proposta.mensagem.substring(0, 150) + '...' : proposta.mensagem)}
+              <strong>💬 Mensagem:</strong>
+              <br />
+              {escapeHtml(
+                proposta.mensagem.length > 150
+                  ? proposta.mensagem.substring(0, 150) + '...'
+                  : proposta.mensagem
+              )}
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
-              <span className="proposal-value">💰 {escapeHtml(valorDisplay)}</span>
-              <span style={{ fontSize: '0.7rem', background: '#f0f4fa', padding: '2px 12px', borderRadius: '60px' }}>📅 {dataFormatada}</span>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '8px',
+                marginTop: '8px',
+              }}
+            >
+              <span className="proposal-value">
+                💰 {escapeHtml(valorDisplay)}
+              </span>
+              <span
+                style={{
+                  fontSize: '0.7rem',
+                  background: '#f0f4fa',
+                  padding: '2px 12px',
+                  borderRadius: '60px',
+                }}
+              >
+                📅 {dataFormatada}
+              </span>
             </div>
           </div>
           <div className="proposal-date">
-            <span>📨 Enviada por: {escapeHtml(proposta.profissional || 'Você')}</span>
+            <span>
+              📨 Enviada por: {escapeHtml(proposta.profissional || 'Você')}
+            </span>
             {/* Link dinâmico usando React Router */}
-            <Link to={`/detalhe-servico/${proposta.servicoId}`} className="detail-link">
+            <Link
+              to={`/detalhe-servico/${proposta.servicoId}`}
+              className="detail-link"
+            >
               Ver detalhes →
             </Link>
           </div>
@@ -176,12 +223,12 @@ const TodasPropostasSev = () => {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    if (window.confirm("Deseja realmente sair da sua conta?")) {
+    if (window.confirm('Deseja realmente sair da sua conta?')) {
       localStorage.removeItem('homeUserName');
       localStorage.removeItem('homeLocation');
-      showSuccessToast("🔐 Logout realizado com sucesso!");
+      showSuccessToast('🔐 Logout realizado com sucesso!');
       setTimeout(() => {
-        window.location.href = "index.html";
+        navigate('/');
       }, 800);
     }
   };
@@ -204,9 +251,15 @@ const TodasPropostasSev = () => {
     const timer = setTimeout(() => {
       const total = getPropostas().length;
       if (total > 0) {
-        showToast(`📬 Você tem ${total} proposta(s) no total. Use os filtros para organizar.`, "#2c5a6e");
+        showToast(
+          `📬 Você tem ${total} proposta(s) no total. Use os filtros para organizar.`,
+          '#2c5a6e'
+        );
       } else {
-        showToast("Envie sua primeira proposta clicando em 'Tenho interesse' em algum serviço", "#c96f0e");
+        showToast(
+          "Envie sua primeira proposta clicando em 'Tenho interesse' em algum serviço",
+          '#c96f0e'
+        );
       }
     }, 400);
 
@@ -518,28 +571,41 @@ const TodasPropostasSev = () => {
   return (
     <>
       <style>{styles}</style>
-      <div style={{
-        background: 'linear-gradient(135deg, #f0f4fa 0%, #e0e8f2 100%)',
-        fontFamily: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
-        minHeight: '100vh',
-        padding: '20px 20px 40px',
-        color: '#1e2e3e'
-      }}>
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #f0f4fa 0%, #e0e8f2 100%)',
+          fontFamily:
+            "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+          minHeight: '100vh',
+          padding: '20px 20px 40px',
+          color: '#1e2e3e',
+        }}
+      >
         <div className="proposals-container">
           <div className="page-header">
             <h1>📋 Propostas</h1>
             <div className="header-row">
               <div className="user-actions">
-                <Link to="/home-sev.html" className="icon-btn" title="Home">
+                <Link to="/home-sev" className="icon-btn" title="Home">
                   <i className="fas fa-home"></i>
                 </Link>
-                <Link to="/todasPropostas-sev.html" className="icon-btn" title="Todas as propostas">
+                <Link
+                  to="/todas-propostas-sev"
+                  className="icon-btn"
+                  title="Todas as propostas"
+                >
                   <i className="fas fa-briefcase"></i>
                 </Link>
-                <Link to="/Perfil-Sev.html" className="icon-btn" title="Perfil">
+                <Link to="/perfil-sev" className="icon-btn" title="Perfil">
                   <i className="fas fa-user"></i>
                 </Link>
-                <a href="#" className="icon-btn" id="logoutBtn" title="Sair" onClick={handleLogout}>
+                <a
+                  href="#"
+                  className="icon-btn"
+                  id="logoutBtn"
+                  title="Sair"
+                  onClick={handleLogout}
+                >
                   <i className="fas fa-sign-out-alt"></i>
                 </a>
               </div>
@@ -573,16 +639,22 @@ const TodasPropostasSev = () => {
             </button>
           </div>
 
-          <div className="proposals-list">
-            {renderPropostas()}
-          </div>
+          <div className="proposals-list">{renderPropostas()}</div>
         </div>
       </div>
 
       {toastMessage && (
         <div
           className={toastType === 'success' ? 'success-toast' : 'toast-msg'}
-          style={toastType === 'success' ? { background: '#f97316' } : { background: toastMessage.includes('📬') ? '#2c5a6e' : '#1f2e3a' }}
+          style={
+            toastType === 'success'
+              ? { background: '#f97316' }
+              : {
+                  background: toastMessage.includes('📬')
+                    ? '#2c5a6e'
+                    : '#1f2e3a',
+                }
+          }
         >
           {toastMessage}
         </div>

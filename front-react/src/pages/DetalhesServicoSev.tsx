@@ -15,8 +15,10 @@ const DetalhesServicoDinamico = () => {
     if (location.state?.servico) {
       setServico(location.state.servico);
     } else {
-      const stored = JSON.parse(localStorage.getItem('servicos_publicados') || '[]');
-      const encontrado = stored.find(s => s.id === id);
+      const stored = JSON.parse(
+        localStorage.getItem('servicos_publicados') || '[]'
+      );
+      const encontrado = stored.find((s) => s.id === id);
       setServico(encontrado);
     }
   }, [id, location]);
@@ -25,10 +27,19 @@ const DetalhesServicoDinamico = () => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 3000);
   };
-  const openModal = (title, msg) => { setModalTitle(title); setModalMessage(msg); setModalVisible(true); };
+  const openModal = (title, msg) => {
+    setModalTitle(title);
+    setModalMessage(msg);
+    setModalVisible(true);
+  };
   const closeModal = () => setModalVisible(false);
-  const handleInterest = () => openModal('Interesse registrado', `Você manifestou interesse no serviço "${servico?.titulo}". O cliente será notificado.`);
-  const handleProposal = () => navigate('/fazer-proposta', { state: { servico } });
+  const handleInterest = () =>
+    openModal(
+      'Interesse registrado',
+      `Você manifestou interesse no serviço "${servico?.titulo}". O cliente será notificado.`
+    );
+  const handleProposal = () =>
+    navigate('/fazer-proposta', { state: { servico } });
 
   if (!servico) return <div className="container">Carregando...</div>;
 
@@ -66,7 +77,12 @@ const DetalhesServicoDinamico = () => {
     <>
       <style>{styles}</style>
       <div className="container">
-        <div className="top-bar"><div className="logo">Detalhe do Serviço</div><button className="back-home" onClick={() => navigate('/home-sev.html')}>← Voltar para Home</button></div>
+        <div className="top-bar">
+          <div className="logo">Detalhe do Serviço</div>
+          <button className="back-home" onClick={() => navigate('/home-sev')}>
+            ← Voltar para Home
+          </button>
+        </div>
         <div className="service-detail-grid">
           <div className="image-column">
             {servico.fotos && servico.fotos.length > 0 ? (
@@ -75,30 +91,59 @@ const DetalhesServicoDinamico = () => {
               </div>
             ) : (
               <div className="service-image-placeholder">
-                <i className="fas fa-image" style={{ fontSize: '80px', marginBottom: '16px' }}></i>
+                <i
+                  className="fas fa-image"
+                  style={{ fontSize: '80px', marginBottom: '16px' }}
+                ></i>
                 <p>Nenhuma imagem enviada</p>
               </div>
             )}
           </div>
           <div className="info-column">
             <h1 className="service-title">{servico.titulo}</h1>
-            <div className="description-service"><strong>Descrição</strong><p>{servico.descricao}</p></div>
+            <div className="description-service">
+              <strong>Descrição</strong>
+              <p>{servico.descricao}</p>
+            </div>
             <div className="quick-info">
               <h3>Informações</h3>
-              <div className="info-row"><span>📍 Localização</span><span>{servico.localizacao}</span></div>
-              <div className="info-row"><span>💰 Valor</span><span>R$ {servico.preco}</span></div>
-              <div className="info-row"><span>⏰ Urgência</span><span>{servico.urgente ? 'Sim' : 'Não'}</span></div>
-              <div className="info-row"><span>📞 Contato</span><span>{servico.contato}</span></div>
+              <div className="info-row">
+                <span>📍 Localização</span>
+                <span>{servico.localizacao}</span>
+              </div>
+              <div className="info-row">
+                <span>💰 Valor</span>
+                <span>R$ {servico.preco}</span>
+              </div>
+              <div className="info-row">
+                <span>⏰ Urgência</span>
+                <span>{servico.urgente ? 'Sim' : 'Não'}</span>
+              </div>
+              <div className="info-row">
+                <span>📞 Contato</span>
+                <span>{servico.contato}</span>
+              </div>
             </div>
             <div className="action-buttons">
-              <button className="btn-interest" onClick={handleInterest}>Tenho interesse</button>
-              <button className="btn-proposal" onClick={handleProposal}>Fazer proposta</button>
+              <button className="btn-interest" onClick={handleInterest}>
+                Tenho interesse
+              </button>
+              <button className="btn-proposal" onClick={handleProposal}>
+                Fazer proposta
+              </button>
             </div>
           </div>
         </div>
       </div>
-      <div className={`modal-overlay ${modalVisible ? 'active' : ''}`} onClick={closeModal}>
-        <div className="modal-card" onClick={(e) => e.stopPropagation()}><h3>{modalTitle}</h3><p>{modalMessage}</p><button onClick={closeModal}>Fechar</button></div>
+      <div
+        className={`modal-overlay ${modalVisible ? 'active' : ''}`}
+        onClick={closeModal}
+      >
+        <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+          <h3>{modalTitle}</h3>
+          <p>{modalMessage}</p>
+          <button onClick={closeModal}>Fechar</button>
+        </div>
       </div>
       {toastMessage && <div className="toast-msg">{toastMessage}</div>}
     </>

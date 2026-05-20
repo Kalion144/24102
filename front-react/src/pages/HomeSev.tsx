@@ -18,9 +18,11 @@ const HomeSev = () => {
   };
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('servicos_publicados') || '[]');
-    setServicosDisponiveis(stored.filter(s => s.status === 'aberto'));
-    
+    const stored = JSON.parse(
+      localStorage.getItem('servicos_publicados') || '[]'
+    );
+    setServicosDisponiveis(stored.filter((s) => s.status === 'aberto'));
+
     const savedProfile = localStorage.getItem('prestadorPerfil');
     if (savedProfile) {
       const profile = JSON.parse(savedProfile);
@@ -78,36 +80,81 @@ const HomeSev = () => {
     <>
       <style>{styles}</style>
       <div className="user-header">
-        <div className="user-info"><h2>Olá, {userName.split(' ')[0]}</h2><div className="user-location"><i className="fas fa-map-marker-alt"></i> {location}</div></div>
+        <div className="user-info">
+          <h2>Olá, {userName.split(' ')[0]}</h2>
+          <div className="user-location">
+            <i className="fas fa-map-marker-alt"></i> {location}
+          </div>
+        </div>
         <div className="user-actions">
-          <button className="icon-btn" onClick={() => navigate('/home-sev.html')}><i className="fas fa-home"></i></button>
-          <button className="icon-btn" onClick={() => navigate('/todasPropostas-sev.html')}><i className="fas fa-briefcase"></i></button>
-          <button className="icon-btn" onClick={() => navigate('/Perfil-Sev.html')}><i className="fas fa-user"></i></button>
-          <button className="icon-btn" onClick={handleLogout}><i className="fas fa-sign-out-alt"></i></button>
+          <button className="icon-btn" onClick={() => navigate('/home-sev')}>
+            <i className="fas fa-home"></i>
+          </button>
+          <button
+            className="icon-btn"
+            onClick={() => navigate('/todas-propostas-sev')}
+          >
+            <i className="fas fa-briefcase"></i>
+          </button>
+          <button className="icon-btn" onClick={() => navigate('/perfil-sev')}>
+            <i className="fas fa-user"></i>
+          </button>
+          <button className="icon-btn" onClick={handleLogout}>
+            <i className="fas fa-sign-out-alt"></i>
+          </button>
         </div>
       </div>
       <div className="profile-location-card">
-        <div className="user-info-card"><div className="avatar">👤</div><div className="user-details"><h3>{userName}</h3><div className="location"><span>📍</span> {location}</div></div></div>
-        <div className="edit-icon" onClick={handleEditLocation}>Alterar local</div>
+        <div className="user-info-card">
+          <div className="avatar">👤</div>
+          <div className="user-details">
+            <h3>{userName}</h3>
+            <div className="location">
+              <span>📍</span> {location}
+            </div>
+          </div>
+        </div>
+        <div className="edit-icon" onClick={handleEditLocation}>
+          Alterar local
+        </div>
       </div>
       <div className="container">
-        <div className="section-title">🔧 Serviços Recomendados <span>Próximo de você</span></div>
+        <div className="section-title">
+          🔧 Serviços Recomendados <span>Próximo de você</span>
+        </div>
         <div className="services-grid">
-          {servicosDisponiveis.map(servico => (
-            <div key={servico.id} className="service-card" onClick={() => handleCardClick(servico)}>
-              <div className="card-header"><span className="prof-name">{servico.clienteNome}</span><span className="rating">⭐ Novo</span></div>
+          {servicosDisponiveis.map((servico) => (
+            <div
+              key={servico.id}
+              className="service-card"
+              onClick={() => handleCardClick(servico)}
+            >
+              <div className="card-header">
+                <span className="prof-name">{servico.clienteNome}</span>
+                <span className="rating">⭐ Novo</span>
+              </div>
               <div className="service-name">{servico.titulo}</div>
               <div className="service-footer">
-                {servico.urgente && <div className="urgent-badge">⚠️ Urgente</div>}
-                <div className="distance-price">📍 {servico.localizacao} • R${servico.preco}</div>
+                {servico.urgente && (
+                  <div className="urgent-badge">⚠️ Urgente</div>
+                )}
+                <div className="distance-price">
+                  📍 {servico.localizacao} • R${servico.preco}
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
       {toastVisible && <div className="success-toast">{toastMessage}</div>}
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-      <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet" />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
     </>
   );
 };

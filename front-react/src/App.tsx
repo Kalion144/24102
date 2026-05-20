@@ -18,19 +18,22 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Index />} />
-      <Route path="/cadastro.html" element={<Cadastro />} />
-      <Route path="/logn-user.html" element={<LoginUser />} />
-      <Route path="/home-cli.html" element={<HomeCli />} />
-      <Route path="/home-sev.html" element={<HomeSev />} />
-      <Route path="/servicos-cli.html" element={<ServicosCliente />} />
-      <Route path="/publicarServico-cli.html" element={<PublicarServico />} />
-      <Route path="/propostas-cli.html" element={<PropostasCliente />} />
-      <Route path="/todasPropostas-sev.html" element={<TodasPropostasSev />} />
-      <Route path="/detalhe-servico/:id" element={<DetalhesServicoDinamico />} />
+      <Route path="/cadastro" element={<Cadastro />} />
+      <Route path="/login" element={<LoginUser />} />
+      <Route path="/home-cli" element={<HomeCli />} />
+      <Route path="/home-sev" element={<HomeSev />} />
+      <Route path="/servicos-cli" element={<ServicosCliente />} />
+      <Route path="/publicar-servico" element={<PublicarServico />} />
+      <Route path="/propostas-cli" element={<PropostasCliente />} />
+      <Route path="/todas-propostas-sev" element={<TodasPropostasSev />} />
+      <Route
+        path="/detalhe-servico/:id"
+        element={<DetalhesServicoDinamico />}
+      />
       <Route path="/fazer-proposta" element={<EnviarPropostaSev />} />
-      <Route path="/Perfil-Sev.html" element={<PerfilSev />} />
-      <Route path="/confPerfil-cli.html" element={<PerfilCliente />} />
-      <Route path="/sobre.html" element={<Sobre />} />
+      <Route path="/perfil-sev" element={<PerfilSev />} />
+      <Route path="/perfil-cli" element={<PerfilCliente />} />
+      <Route path="/sobre" element={<Sobre />} />
     </Routes>
   );
 }

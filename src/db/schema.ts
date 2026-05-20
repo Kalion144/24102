@@ -10,7 +10,7 @@ export const users = sqliteTable("users", {
   foto: text("foto"),
   created_at: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .$defaultFn(() => Date.now()),
+    .$defaultFn(() => new Date()),
 });
 
 export const professionalProfiles = sqliteTable("professional_profiles", {
@@ -59,7 +59,7 @@ export const proposals = sqliteTable("proposals", {
     .default("PENDENTE"),
   created_at: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .$defaultFn(() => Date.now()),
+    .$defaultFn(() => new Date()),
 });
 
 export const proposalProfessionals = sqliteTable("proposal_professionals", {
@@ -99,7 +99,7 @@ export const ratings = sqliteTable("ratings", {
   comentario: text("comentario"),
   created_at: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .$defaultFn(() => Date.now()),
+    .$defaultFn(() => new Date()),
 });
 
 export const usersRelations = relations(users, ({ one, many }) => ({

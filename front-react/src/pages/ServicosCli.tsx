@@ -16,23 +16,30 @@ const ServicosCliente = () => {
   };
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('servicos_publicados') || '[]');
+    const stored = JSON.parse(
+      localStorage.getItem('servicos_publicados') || '[]'
+    );
     const clienteId = localStorage.getItem('clienteId') || 'cliente@email.com';
-    setServicos(stored.filter(s => s.clienteId === clienteId));
+    setServicos(stored.filter((s) => s.clienteId === clienteId));
   }, []);
 
   const openServiceModal = (servico) => {
     setSelectedService(servico);
     setModalOpen(true);
   };
-  const closeModal = () => { setModalOpen(false); setSelectedService(null); };
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedService(null);
+  };
   const handleUpdate = () => {
     showToast('🔄 Página atualizada!');
-    const stored = JSON.parse(localStorage.getItem('servicos_publicados') || '[]');
+    const stored = JSON.parse(
+      localStorage.getItem('servicos_publicados') || '[]'
+    );
     const clienteId = localStorage.getItem('clienteId') || 'cliente@email.com';
-    setServicos(stored.filter(s => s.clienteId === clienteId));
+    setServicos(stored.filter((s) => s.clienteId === clienteId));
   };
-  const handleCreateService = () => navigate('/publicarServico-cli.html');
+  const handleCreateService = () => navigate('/publicar-servico');
   const handleEdit = () => showToast('✏️ Edição em breve');
 
   const styles = `
@@ -79,62 +86,127 @@ const ServicosCliente = () => {
       <style>{styles}</style>
       <div className="services-container">
         <div className="user-header">
-          <div className="user-info"><h2>Olá, João</h2><p>Acompanhe seus pedidos</p></div>
+          <div className="user-info">
+            <h2>Olá, João</h2>
+            <p>Acompanhe seus pedidos</p>
+          </div>
           <div className="user-actions">
-            <button className="icon-btn" onClick={() => navigate('/home-cli.html')}><i className="fas fa-home"></i></button>
-            <button className="icon-btn" onClick={() => { showToast('👋 Logout'); setTimeout(() => navigate('/'), 1500); }}><i className="fas fa-sign-out-alt"></i></button>
+            <button className="icon-btn" onClick={() => navigate('/home-cli')}>
+              <i className="fas fa-home"></i>
+            </button>
+            <button
+              className="icon-btn"
+              onClick={() => {
+                showToast('👋 Logout');
+                setTimeout(() => navigate('/'), 1500);
+              }}
+            >
+              <i className="fas fa-sign-out-alt"></i>
+            </button>
           </div>
         </div>
         <div className="main-grid">
           <div className="left-column">
             <div className="section-card">
               <div className="section-header">
-                <h3><i className="fas fa-clipboard-list"></i> Pedidos Abertos</h3>
-                <button className="update-btn" onClick={handleUpdate}><i className="fas fa-sync-alt"></i> Atualizar</button>
+                <h3>
+                  <i className="fas fa-clipboard-list"></i> Pedidos Abertos
+                </h3>
+                <button className="update-btn" onClick={handleUpdate}>
+                  <i className="fas fa-sync-alt"></i> Atualizar
+                </button>
               </div>
               <div className="progress-section">
-                <div className="progress-label"><span>Ativos</span><span>{servicos.length}-Pedidos</span></div>
-                <div className="progress-bar"><div className="progress-fill" style={{ width: `${Math.min((servicos.length / 3) * 100, 100)}%` }}></div></div>
+                <div className="progress-label">
+                  <span>Ativos</span>
+                  <span>{servicos.length}-Pedidos</span>
+                </div>
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{
+                      width: `${Math.min((servicos.length / 3) * 100, 100)}%`,
+                    }}
+                  ></div>
+                </div>
               </div>
-              {servicos.map(servico => (
-                <div key={servico.id} className="service-card" onClick={() => openServiceModal(servico)}>
+              {servicos.map((servico) => (
+                <div
+                  key={servico.id}
+                  className="service-card"
+                  onClick={() => openServiceModal(servico)}
+                >
                   <div className="service-title">
                     <span>{servico.titulo}</span>
-                    <span className="status-badge status-waiting"><i className="fas fa-clock"></i> Aguardando</span>
+                    <span className="status-badge status-waiting">
+                      <i className="fas fa-clock"></i> Aguardando
+                    </span>
                   </div>
-                  <div className="service-footer"><span><i className="fas fa-users"></i> <span className="interested-count">0 interessados</span></span></div>
+                  <div className="service-footer">
+                    <span>
+                      <i className="fas fa-users"></i>{' '}
+                      <span className="interested-count">0 interessados</span>
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
           <div className="right-column">
             <div className="section-card">
-              <div className="section-header"><h3><i className="fas fa-chart-line"></i> Status</h3></div>
+              <div className="section-header">
+                <h3>
+                  <i className="fas fa-chart-line"></i> Status
+                </h3>
+              </div>
               <div className="status-list">
-                {servicos.map(servico => (
-                  <div key={servico.id} className="status-item" onClick={() => openServiceModal(servico)}>
-                    <div><strong>{servico.titulo}</strong></div>
-                    <div><span>Aguardando profissionais</span> <span className="interested-count"> 0 interessados</span></div>
+                {servicos.map((servico) => (
+                  <div
+                    key={servico.id}
+                    className="status-item"
+                    onClick={() => openServiceModal(servico)}
+                  >
+                    <div>
+                      <strong>{servico.titulo}</strong>
+                    </div>
+                    <div>
+                      <span>Aguardando profissionais</span>{' '}
+                      <span className="interested-count"> 0 interessados</span>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
-            <button className="create-btn" onClick={handleCreateService}><i className="fas fa-plus-circle"></i> + Criar Novo Pedido</button>
+            <button className="create-btn" onClick={handleCreateService}>
+              <i className="fas fa-plus-circle"></i> + Criar Novo Pedido
+            </button>
           </div>
         </div>
         {/* Modal */}
-        <div className={`modal ${modalOpen ? 'active' : ''}`} onClick={closeModal}>
+        <div
+          className={`modal ${modalOpen ? 'active' : ''}`}
+          onClick={closeModal}
+        >
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header"><h3>Detalhes do Serviço</h3><button className="close-modal" onClick={closeModal}>&times;</button></div>
+            <div className="modal-header">
+              <h3>Detalhes do Serviço</h3>
+              <button className="close-modal" onClick={closeModal}>
+                &times;
+              </button>
+            </div>
             <div className="modal-body">
               {selectedService && (
                 <>
-                  <div><strong>{selectedService.titulo}</strong></div>
+                  <div>
+                    <strong>{selectedService.titulo}</strong>
+                  </div>
                   <div>{selectedService.descricao}</div>
                   <div>Status: {selectedService.status}</div>
                   <div>Valor sugerido: R$ {selectedService.preco}</div>
                   <div>Localização: {selectedService.localizacao}</div>
-                  <button className="create-btn" onClick={handleEdit}>Editar</button>
+                  <button className="create-btn" onClick={handleEdit}>
+                    Editar
+                  </button>
                 </>
               )}
             </div>
@@ -142,8 +214,14 @@ const ServicosCliente = () => {
         </div>
       </div>
       {toastMessage && <div className="success-toast">{toastMessage}</div>}
-      <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      />
     </>
   );
 };

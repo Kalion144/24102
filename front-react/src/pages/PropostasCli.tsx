@@ -7,16 +7,25 @@ const PropostasCliente = () => {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('propostas_cliente') || '[]');
+    const stored = JSON.parse(
+      localStorage.getItem('propostas_cliente') || '[]'
+    );
     const clienteId = localStorage.getItem('clienteId') || 'cliente@email.com';
-    setPropostas(stored.filter(p => p.clienteId === clienteId));
+    setPropostas(stored.filter((p) => p.clienteId === clienteId));
   }, []);
 
   const handleAccept = (proposta) => {
-    const allPropostas = JSON.parse(localStorage.getItem('propostas_cliente') || '[]');
-    const updated = allPropostas.map(p => p.id === proposta.id ? { ...p, status: 'aceita' } : p);
+    const allPropostas = JSON.parse(
+      localStorage.getItem('propostas_cliente') || '[]'
+    );
+    const updated = allPropostas.map((p) =>
+      p.id === proposta.id ? { ...p, status: 'aceita' } : p
+    );
     localStorage.setItem('propostas_cliente', JSON.stringify(updated));
-    setToast({ message: `Proposta de ${proposta.profissional} aceita!`, isError: false });
+    setToast({
+      message: `Proposta de ${proposta.profissional} aceita!`,
+      isError: false,
+    });
     setTimeout(() => setToast(null), 3000);
   };
 
@@ -53,23 +62,45 @@ const PropostasCliente = () => {
       <style>{styles}</style>
       <div className="proposals-container">
         <div className="user-header">
-          <div className="user-info"><h2>Recebendo Propostas</h2><p>Escolha a melhor opção para o seu serviço</p></div>
+          <div className="user-info">
+            <h2>Recebendo Propostas</h2>
+            <p>Escolha a melhor opção para o seu serviço</p>
+          </div>
           <div className="user-actions">
-            <button className="icon-btn" onClick={() => navigate('/home-cli.html')}><i className="fas fa-home"></i></button>
-            <button className="icon-btn" onClick={() => navigate('/')}><i className="fas fa-sign-out-alt"></i></button>
+            <button className="icon-btn" onClick={() => navigate('/home-cli')}>
+              <i className="fas fa-home"></i>
+            </button>
+            <button className="icon-btn" onClick={() => navigate('/')}>
+              <i className="fas fa-sign-out-alt"></i>
+            </button>
           </div>
         </div>
         <div className="main-grid">
           <div className="left-column">
             <div className="section-card">
-              <div className="section-header"><h3><i className="fas fa-file-signature"></i> Propostas Recebidas</h3><span className="badge-count">{propostas.length}</span></div>
+              <div className="section-header">
+                <h3>
+                  <i className="fas fa-file-signature"></i> Propostas Recebidas
+                </h3>
+                <span className="badge-count">{propostas.length}</span>
+              </div>
               <div className="proposals-list">
-                {propostas.map(prop => (
+                {propostas.map((prop) => (
                   <div key={prop.id} className="proposal-card">
-                    <div className="proposal-header"><span className="professional-name">{prop.profissional}</span><span className="status-badge">{prop.status}</span></div>
+                    <div className="proposal-header">
+                      <span className="professional-name">
+                        {prop.profissional}
+                      </span>
+                      <span className="status-badge">{prop.status}</span>
+                    </div>
                     <div className="proposal-price">Valor: {prop.valor}</div>
                     <div className="proposal-description">{prop.mensagem}</div>
-                    <button className="btn-accept" onClick={() => handleAccept(prop)}>Aceitar proposta</button>
+                    <button
+                      className="btn-accept"
+                      onClick={() => handleAccept(prop)}
+                    >
+                      Aceitar proposta
+                    </button>
                   </div>
                 ))}
               </div>
@@ -78,8 +109,14 @@ const PropostasCliente = () => {
         </div>
       </div>
       {toast && <div className="success-toast">{toast.message}</div>}
-      <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      />
     </>
   );
 };

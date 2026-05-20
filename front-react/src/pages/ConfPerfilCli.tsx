@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const PerfilCliente = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nome: 'João Silva',
     email: 'joao.silva@email.com',
@@ -18,7 +20,11 @@ const PerfilCliente = () => {
   const [avatar, setAvatar] = useState(null);
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
-  const [toast, setToast] = useState({ show: false, message: '', isError: false });
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    isError: false,
+  });
   const toastTimeout = useRef(null);
 
   // Carregar dados salvos
@@ -27,7 +33,7 @@ const PerfilCliente = () => {
     if (savedProfile) {
       try {
         const data = JSON.parse(savedProfile);
-        setFormData(prev => ({ ...prev, ...data }));
+        setFormData((prev) => ({ ...prev, ...data }));
       } catch (e) {}
     }
     const savedAvatar = localStorage.getItem('userAvatar');
@@ -46,7 +52,7 @@ const PerfilCliente = () => {
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const saveProfile = () => {
@@ -55,7 +61,10 @@ const PerfilCliente = () => {
     // Também salva nome e localização separadamente para fácil acesso no HomeCli
     localStorage.setItem('clienteNome', formData.nome);
     if (formData.cidade && formData.estado) {
-      localStorage.setItem('clienteLocalizacao', `${formData.cidade} - ${formData.estado}`);
+      localStorage.setItem(
+        'clienteLocalizacao',
+        `${formData.cidade} - ${formData.estado}`
+      );
     }
     showToast('✅ Perfil atualizado com sucesso!');
   };
@@ -64,7 +73,7 @@ const PerfilCliente = () => {
     const saved = localStorage.getItem('userProfile');
     if (saved) {
       const data = JSON.parse(saved);
-      setFormData(prev => ({ ...prev, ...data }));
+      setFormData((prev) => ({ ...prev, ...data }));
     } else {
       setFormData({
         nome: 'João Silva',
@@ -107,17 +116,20 @@ const PerfilCliente = () => {
     reader.readAsDataURL(selectedPhoto);
   };
 
-  const navigateTo = (url) => { window.location.href = url; };
   const handleLogout = () => {
     showToast('👋 Até logo! Fazendo logout...');
-    setTimeout(() => navigateTo('index.html'), 1500);
+    setTimeout(() => navigate('/'), 1500);
   };
   const scrollToForm = () => {
-    document.querySelector('.form-section')?.scrollIntoView({ behavior: 'smooth' });
+    document
+      .querySelector('.form-section')
+      ?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
-    return () => { if (toastTimeout.current) clearTimeout(toastTimeout.current); };
+    return () => {
+      if (toastTimeout.current) clearTimeout(toastTimeout.current);
+    };
   }, []);
 
   // Estilos (mantidos iguais ao original, fornecido anteriormente)
@@ -495,10 +507,13 @@ textarea {
             <p>Gerencie suas informações pessoais</p>
           </div>
           <div className="user-actions">
-            <button className="icon-btn" onClick={() => navigateTo('propostas-cli.html')}>
+            <button
+              className="icon-btn"
+              onClick={() => navigate('/propostas-cli')}
+            >
               <i className="fas fa-bell"></i>
             </button>
-            <button className="icon-btn" onClick={() => navigateTo('home-cli.html')}>
+            <button className="icon-btn" onClick={() => navigate('/home-cli')}>
               <i className="fas fa-home"></i>
             </button>
             <button className="icon-btn" onClick={handleLogout}>
@@ -531,73 +546,135 @@ textarea {
           </div>
 
           <div className="form-section">
-            <h4><i className="fas fa-user-edit"></i> Informações Pessoais</h4>
+            <h4>
+              <i className="fas fa-user-edit"></i> Informações Pessoais
+            </h4>
             <div className="double-row">
               <div className="form-group">
                 <label>Nome completo</label>
-                <input type="text" id="nome" value={formData.nome} onChange={handleChange} />
+                <input
+                  type="text"
+                  id="nome"
+                  value={formData.nome}
+                  onChange={handleChange}
+                />
               </div>
               <div className="form-group">
                 <label>Data de nascimento</label>
-                <input type="date" id="dataNascimento" value={formData.dataNascimento} onChange={handleChange} />
+                <input
+                  type="date"
+                  id="dataNascimento"
+                  value={formData.dataNascimento}
+                  onChange={handleChange}
+                />
               </div>
             </div>
             <div className="form-group">
               <label>E-mail</label>
-              <input type="email" id="email" value={formData.email} onChange={handleChange} />
+              <input
+                type="email"
+                id="email"
+                value={formData.email}
+                onChange={handleChange}
+              />
             </div>
             <div className="double-row">
               <div className="form-group">
                 <label>Telefone</label>
-                <input type="tel" id="telefone" value={formData.telefone} onChange={handleChange} />
+                <input
+                  type="tel"
+                  id="telefone"
+                  value={formData.telefone}
+                  onChange={handleChange}
+                />
               </div>
               <div className="form-group">
                 <label>CPF</label>
-                <input type="text" id="cpf" value={formData.cpf} onChange={handleChange} />
+                <input
+                  type="text"
+                  id="cpf"
+                  value={formData.cpf}
+                  onChange={handleChange}
+                />
               </div>
             </div>
             <div className="form-group">
               <label>Endereço</label>
-              <input type="text" id="endereco" value={formData.endereco} onChange={handleChange} />
+              <input
+                type="text"
+                id="endereco"
+                value={formData.endereco}
+                onChange={handleChange}
+              />
             </div>
             <div className="double-row">
               <div className="form-group">
                 <label>Cidade</label>
-                <input type="text" id="cidade" value={formData.cidade} onChange={handleChange} />
+                <input
+                  type="text"
+                  id="cidade"
+                  value={formData.cidade}
+                  onChange={handleChange}
+                />
               </div>
               <div className="form-group">
                 <label>Estado</label>
-                <select id="estado" value={formData.estado} onChange={handleChange}>
-                  <option value="DF">DF</option><option value="SP">SP</option><option value="RJ">RJ</option>
-                  <option value="MG">MG</option><option value="BA">BA</option><option value="PR">PR</option>
-                  <option value="RS">RS</option><option value="SC">SC</option><option value="GO">GO</option>
+                <select
+                  id="estado"
+                  value={formData.estado}
+                  onChange={handleChange}
+                >
+                  <option value="DF">DF</option>
+                  <option value="SP">SP</option>
+                  <option value="RJ">RJ</option>
+                  <option value="MG">MG</option>
+                  <option value="BA">BA</option>
+                  <option value="PR">PR</option>
+                  <option value="RS">RS</option>
+                  <option value="SC">SC</option>
+                  <option value="GO">GO</option>
                 </select>
               </div>
             </div>
           </div>
 
           <div className="form-section">
-            <h4><i className="fas fa-address-card"></i> Sobre mim</h4>
+            <h4>
+              <i className="fas fa-address-card"></i> Sobre mim
+            </h4>
             <div className="form-group">
               <label>Biografia</label>
               <textarea id="bio" value={formData.bio} onChange={handleChange} />
-              <div className="hint-text">Compartilhe suas preferências e o que você valoriza em um profissional</div>
+              <div className="hint-text">
+                Compartilhe suas preferências e o que você valoriza em um
+                profissional
+              </div>
             </div>
           </div>
 
           <div className="form-section">
-            <h4><i className="fas fa-cog"></i> Preferências</h4>
+            <h4>
+              <i className="fas fa-cog"></i> Preferências
+            </h4>
             <div className="double-row">
               <div className="form-group">
                 <label>Receber notificações</label>
-                <select id="notificacoes" value={formData.notificacoes} onChange={handleChange}>
+                <select
+                  id="notificacoes"
+                  value={formData.notificacoes}
+                  onChange={handleChange}
+                >
                   <option value="sim">Sim, quero receber</option>
                   <option value="nao">Não, não quero receber</option>
                 </select>
               </div>
               <div className="form-group">
                 <label>Idioma</label>
-                <select id="idioma" value={formData.idioma} onChange={handleChange}>
+                <select
+                  id="idioma"
+                  value={formData.idioma}
+                  onChange={handleChange}
+                >
                   <option value="pt">Português</option>
                   <option value="en">English</option>
                   <option value="es">Español</option>
@@ -607,8 +684,12 @@ textarea {
           </div>
 
           <div className="action-buttons">
-            <button className="btn-cancel" onClick={cancelChanges}>Cancelar</button>
-            <button className="btn-save" onClick={saveProfile}>Salvar alterações</button>
+            <button className="btn-cancel" onClick={cancelChanges}>
+              Cancelar
+            </button>
+            <button className="btn-save" onClick={saveProfile}>
+              Salvar alterações
+            </button>
           </div>
         </div>
 
@@ -617,27 +698,53 @@ textarea {
         </div>
 
         {/* Modal de foto */}
-        <div className={`modal ${photoModalOpen ? 'active' : ''}`} onClick={closePhotoModal}>
+        <div
+          className={`modal ${photoModalOpen ? 'active' : ''}`}
+          onClick={closePhotoModal}
+        >
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h4><i className="fas fa-camera"></i> Adicionar foto de perfil</h4>
+            <h4>
+              <i className="fas fa-camera"></i> Adicionar foto de perfil
+            </h4>
             <p>Escolha uma foto para seu perfil</p>
-            <input type="file" accept="image/jpeg,image/png,image/jpg" onChange={handlePhotoFileChange} style={{ margin: '1rem 0' }} />
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/jpg"
+              onChange={handlePhotoFileChange}
+              style={{ margin: '1rem 0' }}
+            />
             <div className="modal-buttons">
-              <button className="btn-cancel" onClick={closePhotoModal}>Cancelar</button>
-              <button className="btn-save" onClick={saveProfilePhoto}>Salvar foto</button>
+              <button className="btn-cancel" onClick={closePhotoModal}>
+                Cancelar
+              </button>
+              <button className="btn-save" onClick={saveProfilePhoto}>
+                Salvar foto
+              </button>
             </div>
           </div>
         </div>
 
         {toast.show && (
-          <div className="success-toast" style={{ background: toast.isError ? '#dc2626' : '#f97316' }}>
-            <i className={`fas ${toast.isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}`}></i> {toast.message}
+          <div
+            className="success-toast"
+            style={{ background: toast.isError ? '#dc2626' : '#f97316' }}
+          >
+            <i
+              className={`fas ${toast.isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}`}
+            ></i>{' '}
+            {toast.message}
           </div>
         )}
       </div>
 
-      <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      />
     </>
   );
 };

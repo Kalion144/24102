@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const DEFAULT_AVATAR_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238aa0bc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
+const DEFAULT_AVATAR_SVG =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238aa0bc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
 
 const PerfilPrestador = () => {
   const [nome, setNome] = useState('');
   const [profissao, setProfissao] = useState('Eletricista');
   const [bio, setBio] = useState('');
   const [experiencia, setExperiencia] = useState('');
-  const [skillsArray, setSkillsArray] = useState(['Instalação e reparos', 'Manutenção geral', 'Design de projetos']);
+  const [skillsArray, setSkillsArray] = useState([
+    'Instalação e reparos',
+    'Manutenção geral',
+    'Design de projetos',
+  ]);
   const [photoBase64, setPhotoBase64] = useState(null);
   const [newSkillInput, setNewSkillInput] = useState('');
   const [toastMessage, setToastMessage] = useState('');
@@ -24,7 +29,10 @@ const PerfilPrestador = () => {
   };
 
   const updateAvatarPreview = (imageDataUrl) => {
-    if (imageDataUrl && (imageDataUrl.startsWith('data:image') || imageDataUrl.startsWith('http'))) {
+    if (
+      imageDataUrl &&
+      (imageDataUrl.startsWith('data:image') || imageDataUrl.startsWith('http'))
+    ) {
       setPhotoBase64(imageDataUrl);
     } else {
       setPhotoBase64(null);
@@ -34,36 +42,70 @@ const PerfilPrestador = () => {
   const handleFileSelect = (file) => {
     if (!file) return;
     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) { showToast("Formato inválido. Use PNG, JPG ou WEBP.", "#b91c1c"); return; }
-    if (file.size > 5 * 1024 * 1024) { showToast("Imagem muito grande! Máximo 5MB.", "#b91c1c"); return; }
+    if (!allowedTypes.includes(file.type)) {
+      showToast('Formato inválido. Use PNG, JPG ou WEBP.', '#b91c1c');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Imagem muito grande! Máximo 5MB.', '#b91c1c');
+      return;
+    }
     const reader = new FileReader();
-    reader.onload = (e) => { updateAvatarPreview(e.target.result); showToast("Foto de perfil atualizada!", "#2c7a6e"); };
-    reader.onerror = () => showToast("Erro ao ler a imagem.", "#b91c1c");
+    reader.onload = (e) => {
+      updateAvatarPreview(e.target.result);
+      showToast('Foto de perfil atualizada!', '#2c7a6e');
+    };
+    reader.onerror = () => showToast('Erro ao ler a imagem.', '#b91c1c');
     reader.readAsDataURL(file);
   };
 
   const handleUploadClick = () => fileInputRef.current.click();
   const handleFileChange = (event) => {
-    if (event.target.files && event.target.files.length > 0) handleFileSelect(event.target.files[0]);
+    if (event.target.files && event.target.files.length > 0)
+      handleFileSelect(event.target.files[0]);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
-  const handleRemovePhoto = () => { updateAvatarPreview(null); showToast("Foto removida", "#6c757d"); };
+  const handleRemovePhoto = () => {
+    updateAvatarPreview(null);
+    showToast('Foto removida', '#6c757d');
+  };
 
   const addSkill = () => {
     const skill = newSkillInput.trim();
-    if (skill === "") { showToast("Digite uma habilidade antes de adicionar", "#c2410c"); return; }
-    if (skillsArray.some(s => s.toLowerCase() === skill.toLowerCase())) { showToast("Essa habilidade já está na lista", "#e07c3c"); return; }
-    if (skill.length > 50) { showToast("Máximo de 50 caracteres", "#c2410c"); return; }
+    if (skill === '') {
+      showToast('Digite uma habilidade antes de adicionar', '#c2410c');
+      return;
+    }
+    if (skillsArray.some((s) => s.toLowerCase() === skill.toLowerCase())) {
+      showToast('Essa habilidade já está na lista', '#e07c3c');
+      return;
+    }
+    if (skill.length > 50) {
+      showToast('Máximo de 50 caracteres', '#c2410c');
+      return;
+    }
     setSkillsArray([...skillsArray, skill]);
     setNewSkillInput('');
-    showToast(`"${skill}" adicionada`, "#2c7a6e");
+    showToast(`"${skill}" adicionada`, '#2c7a6e');
   };
-  const removeSkill = (index) => { setSkillsArray(skillsArray.filter((_, i) => i !== index)); showToast('Habilidade removida', '#4b6e8a'); };
+  const removeSkill = (index) => {
+    setSkillsArray(skillsArray.filter((_, i) => i !== index));
+    showToast('Habilidade removida', '#4b6e8a');
+  };
 
   const validateForm = () => {
-    if (nome.trim() === "") { showToast("Por favor, informe seu nome completo", "#b91c1c"); return false; }
-    if (nome.length < 3) { showToast("Nome muito curto, mínimo 3 caracteres", "#b91c1c"); return false; }
-    if (profissao.trim() === "") { showToast("Informe sua profissão ou especialidade", "#b91c1c"); return false; }
+    if (nome.trim() === '') {
+      showToast('Por favor, informe seu nome completo', '#b91c1c');
+      return false;
+    }
+    if (nome.length < 3) {
+      showToast('Nome muito curto, mínimo 3 caracteres', '#b91c1c');
+      return false;
+    }
+    if (profissao.trim() === '') {
+      showToast('Informe sua profissão ou especialidade', '#b91c1c');
+      return false;
+    }
     return true;
   };
 
@@ -78,17 +120,30 @@ const PerfilPrestador = () => {
       fotoPerfil: photoBase64 || null,
       savedAt: new Date().toISOString(),
       localizacao: localStorage.getItem('homeLocation') || 'Brasília - DF',
-      avaliacao: '4.8'
+      avaliacao: '4.8',
     };
     localStorage.setItem('prestadorPerfil', JSON.stringify(profileData));
     // Atualizar lista global para aparecer no HomeCli
-    const prestadores = JSON.parse(localStorage.getItem('prestadores_cadastrados') || '[]');
-    const existingIndex = prestadores.findIndex(p => p.nome === profileData.nome);
-    const prestadorCompleto = { ...profileData, id: existingIndex !== -1 ? prestadores[existingIndex].id : Date.now() };
+    const prestadores = JSON.parse(
+      localStorage.getItem('prestadores_cadastrados') || '[]'
+    );
+    const existingIndex = prestadores.findIndex(
+      (p) => p.nome === profileData.nome
+    );
+    const prestadorCompleto = {
+      ...profileData,
+      id: existingIndex !== -1 ? prestadores[existingIndex].id : Date.now(),
+    };
     if (existingIndex !== -1) prestadores[existingIndex] = prestadorCompleto;
     else prestadores.push(prestadorCompleto);
-    localStorage.setItem('prestadores_cadastrados', JSON.stringify(prestadores));
-    showToast(`✅ Perfil salvo! ${profileData.nome} - ${profileData.profissao} | ${skillsArray.length} habilidades.`, '#1f6e5c');
+    localStorage.setItem(
+      'prestadores_cadastrados',
+      JSON.stringify(prestadores)
+    );
+    showToast(
+      `✅ Perfil salvo! ${profileData.nome} - ${profileData.profissao} | ${skillsArray.length} habilidades.`,
+      '#1f6e5c'
+    );
     setIsSavePressed(true);
     setTimeout(() => setIsSavePressed(false), 200);
   };
@@ -102,21 +157,42 @@ const PerfilPrestador = () => {
         if (data.profissao) setProfissao(data.profissao);
         if (data.bio) setBio(data.bio);
         if (data.experiencia) setExperiencia(data.experiencia);
-        if (data.habilidades && Array.isArray(data.habilidades) && data.habilidades.length > 0) setSkillsArray(data.habilidades);
-        if (data.fotoPerfil && data.fotoPerfil.startsWith('data:image')) setPhotoBase64(data.fotoPerfil);
-        showToast("Dados carregados do rascunho", "#2c7a6e");
-      } catch(e) { console.warn(e); }
+        if (
+          data.habilidades &&
+          Array.isArray(data.habilidades) &&
+          data.habilidades.length > 0
+        )
+          setSkillsArray(data.habilidades);
+        if (data.fotoPerfil && data.fotoPerfil.startsWith('data:image'))
+          setPhotoBase64(data.fotoPerfil);
+        showToast('Dados carregados do rascunho', '#2c7a6e');
+      } catch (e) {
+        console.warn(e);
+      }
     }
   };
   const cancelForm = () => {
-    if (window.confirm("Tem certeza que deseja cancelar?")) {
-      setNome(''); setProfissao('Eletricista'); setBio(''); setExperiencia('');
-      setSkillsArray(['Instalação e reparos', 'Manutenção geral', 'Design de projetos']);
-      setNewSkillInput(''); setPhotoBase64(null);
-      showToast("Formulário reiniciado", "#6c757d");
+    if (window.confirm('Tem certeza que deseja cancelar?')) {
+      setNome('');
+      setProfissao('Eletricista');
+      setBio('');
+      setExperiencia('');
+      setSkillsArray([
+        'Instalação e reparos',
+        'Manutenção geral',
+        'Design de projetos',
+      ]);
+      setNewSkillInput('');
+      setPhotoBase64(null);
+      showToast('Formulário reiniciado', '#6c757d');
     }
   };
-  useEffect(() => { loadSavedData(); return () => { if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current); }; }, []);
+  useEffect(() => {
+    loadSavedData();
+    return () => {
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    };
+  }, []);
 
   const styles = `* {
   margin: 0;
@@ -507,43 +583,167 @@ textarea {
   return (
     <>
       <style>{styles}</style>
-      <div style={{ background: 'linear-gradient(135deg, #f0f4fa 0%, #d9e2ef 100%)', fontFamily: "'Inter', sans-serif", padding: '32px 20px', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #f0f4fa 0%, #d9e2ef 100%)',
+          fontFamily: "'Inter', sans-serif",
+          padding: '32px 20px',
+          minHeight: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <div className="profile-card">
-          <div className="form-header"><h1>📋 Fale sobre você</h1><div className="sub">Complete seus dados profissionais e aumente suas oportunidades</div></div>
+          <div className="form-header">
+            <h1>📋 Fale sobre você</h1>
+            <div className="sub">
+              Complete seus dados profissionais e aumente suas oportunidades
+            </div>
+          </div>
           <div className="form-body">
             <div className="profile-photo-section">
               <div className="photo-container">
-                <img className="avatar-preview" src={photoBase64 || DEFAULT_AVATAR_SVG} alt="Foto de perfil" style={{ background: '#eef2fa', objectFit: 'cover' }} />
+                <img
+                  className="avatar-preview"
+                  src={photoBase64 || DEFAULT_AVATAR_SVG}
+                  alt="Foto de perfil"
+                  style={{ background: '#eef2fa', objectFit: 'cover' }}
+                />
                 <div className="photo-actions">
-                  <button className="btn-photo" onClick={handleUploadClick}>📷 Upload foto</button>
-                  <button className="btn-photo btn-photo-danger" onClick={handleRemovePhoto}>🗑️ Remover</button>
+                  <button className="btn-photo" onClick={handleUploadClick}>
+                    📷 Upload foto
+                  </button>
+                  <button
+                    className="btn-photo btn-photo-danger"
+                    onClick={handleRemovePhoto}
+                  >
+                    🗑️ Remover
+                  </button>
                 </div>
-                <input type="file" ref={fileInputRef} className="file-input-hidden" accept="image/jpeg, image/png, image/jpg, image/webp" onChange={handleFileChange} />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="file-input-hidden"
+                  accept="image/jpeg, image/png, image/jpg, image/webp"
+                  onChange={handleFileChange}
+                />
               </div>
-              <div className="photo-info">⭐ Adicione uma foto de perfil profissional.<br />Clientes confiam mais em perfis com foto. (PNG, JPG até 5MB)</div>
+              <div className="photo-info">
+                ⭐ Adicione uma foto de perfil profissional.
+                <br />
+                Clientes confiam mais em perfis com foto. (PNG, JPG até 5MB)
+              </div>
             </div>
-            <div className="form-section"><div className="section-title">Identidade</div>
-              <div className="field-group"><label>Seu Nome <span className="label-hint">(obrigatório)</span></label><input type="text" placeholder="Ex: Rafael Mendes" value={nome} onChange={(e) => setNome(e.target.value)} /></div>
-              <div className="field-group"><label>Profissão / Especialidade <span className="label-hint">(ex: Eletricista)</span></label><input type="text" placeholder="Eletricista, Pedreiro, Marceneiro..." value={profissao} onChange={(e) => setProfissao(e.target.value)} /><div className="example-hint">🔧 Ex: Eletricista, Encanador, Pintor, Servente...</div></div>
+            <div className="form-section">
+              <div className="section-title">Identidade</div>
+              <div className="field-group">
+                <label>
+                  Seu Nome <span className="label-hint">(obrigatório)</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: Rafael Mendes"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                />
+              </div>
+              <div className="field-group">
+                <label>
+                  Profissão / Especialidade{' '}
+                  <span className="label-hint">(ex: Eletricista)</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Eletricista, Pedreiro, Marceneiro..."
+                  value={profissao}
+                  onChange={(e) => setProfissao(e.target.value)}
+                />
+                <div className="example-hint">
+                  🔧 Ex: Eletricista, Encanador, Pintor, Servente...
+                </div>
+              </div>
             </div>
-            <div className="form-section"><div className="section-title">Descrição (bio)</div>
-              <div className="field-group"><textarea rows="3" placeholder="Conte um pouco sobre você..." value={bio} onChange={(e) => setBio(e.target.value)} /><div className="example-hint">✨ Dica: mencione anos de experiência, diferencial e estilo de trabalho.</div></div>
+            <div className="form-section">
+              <div className="section-title">Descrição (bio)</div>
+              <div className="field-group">
+                <textarea
+                  rows="3"
+                  placeholder="Conte um pouco sobre você..."
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                />
+                <div className="example-hint">
+                  ✨ Dica: mencione anos de experiência, diferencial e estilo de
+                  trabalho.
+                </div>
+              </div>
             </div>
-            <div className="form-section"><div className="section-title">Experiência <span className="label-hint">(opcional)</span></div>
-              <div className="field-group"><textarea rows="3" placeholder="Descreva sua experiência..." value={experiencia} onChange={(e) => setExperiencia(e.target.value)} /></div>
+            <div className="form-section">
+              <div className="section-title">
+                Experiência <span className="label-hint">(opcional)</span>
+              </div>
+              <div className="field-group">
+                <textarea
+                  rows="3"
+                  placeholder="Descreva sua experiência..."
+                  value={experiencia}
+                  onChange={(e) => setExperiencia(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="form-section"><div className="section-title">🛠️ Habilidades</div>
+            <div className="form-section">
+              <div className="section-title">🛠️ Habilidades</div>
               <div className="skills-area">
-                <div className="skills-list">{skillsArray.map((skill, idx) => (<div className="skill-tag" key={idx}>{skill}<button onClick={() => removeSkill(idx)}>✕</button></div>))}</div>
-                <div className="add-skill"><input type="text" placeholder="Nova habilidade" value={newSkillInput} onChange={(e) => setNewSkillInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && addSkill()} /><button className="btn-add-skill" onClick={addSkill}>+ Adicionar</button></div>
-                <div className="example-hint" style={{ marginTop: '12px' }}>💡 Ex: Instalação elétrica, Manutenção corretiva, Leitura de projetos, Atendimento ao cliente.</div>
+                <div className="skills-list">
+                  {skillsArray.map((skill, idx) => (
+                    <div className="skill-tag" key={idx}>
+                      {skill}
+                      <button onClick={() => removeSkill(idx)}>✕</button>
+                    </div>
+                  ))}
+                </div>
+                <div className="add-skill">
+                  <input
+                    type="text"
+                    placeholder="Nova habilidade"
+                    value={newSkillInput}
+                    onChange={(e) => setNewSkillInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && addSkill()}
+                  />
+                  <button className="btn-add-skill" onClick={addSkill}>
+                    + Adicionar
+                  </button>
+                </div>
+                <div className="example-hint" style={{ marginTop: '12px' }}>
+                  💡 Ex: Instalação elétrica, Manutenção corretiva, Leitura de
+                  projetos, Atendimento ao cliente.
+                </div>
               </div>
             </div>
-            <div className="action-buttons"><button className="btn-cancel" onClick={cancelForm}>Cancelar</button><button className="btn-save" onClick={saveProfile} style={{ transform: isSavePressed ? 'scale(0.97)' : 'none' }}>Salvar Perfil</button></div>
+            <div className="action-buttons">
+              <button className="btn-cancel" onClick={cancelForm}>
+                Cancelar
+              </button>
+              <button
+                className="btn-save"
+                onClick={saveProfile}
+                style={{ transform: isSavePressed ? 'scale(0.97)' : 'none' }}
+              >
+                Salvar Perfil
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      {toastMessage && <div className="toast-message" style={{ backgroundColor: toastBgColor }}>{toastMessage}</div>}
+      {toastMessage && (
+        <div
+          className="toast-message"
+          style={{ backgroundColor: toastBgColor }}
+        >
+          {toastMessage}
+        </div>
+      )}
     </>
   );
 };

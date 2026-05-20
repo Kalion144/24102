@@ -17,7 +17,10 @@ export default function EnviarPropostaSev() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!mensagem.trim()) {
-      setToast({ message: 'Escreva uma mensagem para o cliente.', isError: true });
+      setToast({
+        message: 'Escreva uma mensagem para o cliente.',
+        isError: true,
+      });
       return;
     }
     const prestadorNome = localStorage.getItem('prestadorPerfil')
@@ -30,15 +33,23 @@ export default function EnviarPropostaSev() {
       clienteNome: servico.clienteNome || 'Cliente',
       servicoTitulo: servico.titulo,
       mensagem,
-      valor: valor ? `${valor}${negociavel ? ' (negociável)' : ''}` : (negociavel ? 'Negociável' : 'Não informado'),
+      valor: valor
+        ? `${valor}${negociavel ? ' (negociável)' : ''}`
+        : negociavel
+          ? 'Negociável'
+          : 'Não informado',
       data: new Date().toISOString(),
       status: 'aguardando',
       profissional: prestadorNome,
     };
-    const propostasPrestador = JSON.parse(localStorage.getItem('minhasPropostas') || '[]');
+    const propostasPrestador = JSON.parse(
+      localStorage.getItem('minhasPropostas') || '[]'
+    );
     propostasPrestador.unshift(novaProposta);
     localStorage.setItem('minhasPropostas', JSON.stringify(propostasPrestador));
-    const propostasCliente = JSON.parse(localStorage.getItem('propostas_cliente') || '[]');
+    const propostasCliente = JSON.parse(
+      localStorage.getItem('propostas_cliente') || '[]'
+    );
     propostasCliente.unshift(novaProposta);
     localStorage.setItem('propostas_cliente', JSON.stringify(propostasCliente));
     setToast({ message: 'Proposta enviada com sucesso!', isError: false });
@@ -72,38 +83,84 @@ export default function EnviarPropostaSev() {
         <div className="proposal-header">
           <h1>📩 Enviar proposta</h1>
           <div className="user-actions">
-            <button className="icon-btn" onClick={() => navigate('/home-sev.html')}><i className="fas fa-home"></i></button>
-            <button className="icon-btn" onClick={() => navigate('/todasPropostas-sev.html')}><i className="fas fa-briefcase"></i></button>
-            <button className="icon-btn" onClick={() => navigate('/Perfil-Sev.html')}><i className="fas fa-user"></i></button>
+            <button
+              className="icon-btn"
+              onClick={() => navigate('/home-sev.html')}
+            >
+              <i className="fas fa-home"></i>
+            </button>
+            <button
+              className="icon-btn"
+              onClick={() => navigate('/todasPropostas-sev.html')}
+            >
+              <i className="fas fa-briefcase"></i>
+            </button>
+            <button
+              className="icon-btn"
+              onClick={() => navigate('/Perfil-Sev.html')}
+            >
+              <i className="fas fa-user"></i>
+            </button>
           </div>
         </div>
         <div className="proposal-body">
           <div className="client-info-card">
             <div className="client-details">
               <h3>{servico?.clienteNome || 'Cliente'}</h3>
-              <p>📍 {servico?.localizacao} · Serviço: {servico?.titulo}</p>
+              <p>
+                📍 {servico?.localizacao} · Serviço: {servico?.titulo}
+              </p>
             </div>
           </div>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>💬 Mensagem para o cliente <span>(obrigatório)</span></label>
-              <textarea value={mensagem} onChange={e => setMensagem(e.target.value)} rows="4" required></textarea>
+              <label>
+                💬 Mensagem para o cliente <span>(obrigatório)</span>
+              </label>
+              <textarea
+                value={mensagem}
+                onChange={(e) => setMensagem(e.target.value)}
+                rows="4"
+                required
+              ></textarea>
             </div>
             <div className="form-group">
-              <label>💰 Sugerir um valor <span>(opcional)</span></label>
-              <input type="text" value={valor} onChange={e => setValor(e.target.value)} placeholder="Ex: 1200,00" />
-              <label style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <input type="checkbox" checked={negociavel} onChange={e => setNegociavel(e.target.checked)} /> Marc
-
-o como "negociável"
+              <label>
+                💰 Sugerir um valor <span>(opcional)</span>
+              </label>
+              <input
+                type="text"
+                value={valor}
+                onChange={(e) => setValor(e.target.value)}
+                placeholder="Ex: 1200,00"
+              />
+              <label
+                style={{
+                  marginTop: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={negociavel}
+                  onChange={(e) => setNegociavel(e.target.checked)}
+                />{' '}
+                Marc o como "negociável"
               </label>
             </div>
-            <button type="submit" className="btn-submit"><i className="fas fa-paper-plane"></i> Enviar proposta</button>
+            <button type="submit" className="btn-submit">
+              <i className="fas fa-paper-plane"></i> Enviar proposta
+            </button>
           </form>
         </div>
       </div>
       {toast && <div className="success-toast">{toast.message}</div>}
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      />
     </>
   );
 }

@@ -32,7 +32,7 @@ export class ProposalController {
           prazo,
           status: 'PENDENTE',
         })
-        .$returningId()
+        .returning({ id: proposals.id })
 
       res.status(201).json({
         mensagem: 'Proposta criada com sucesso',
