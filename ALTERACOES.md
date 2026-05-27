@@ -238,3 +238,70 @@
 
 - [ ] Corrigir navegações em PerfilSev.jsx
 - [ ] Integrar as páginas com as APIs do backend
+
+---
+
+## Correção de Bugs Críticos no Frontend — 27/05/2026
+
+### Arquivo: `front-react/src/pages/Cadastro.tsx`
+
+**Bug 1 — Tipo `Errors` inexistente:**
+- `import { Errors }` causava erro de compilação TypeScript (`Errors` não exportado de `types.ts`)
+- Corrigido: → `import { FormErrors }` e `useState<FormErrors>`
+
+**Bug 2 — Estado `toast` sem `null` no tipo:**
+- `useState<Toast>(null)` — `null` não é atribuível a `Toast`
+- Corrigido: → `useState<Toast | null>(null)`
+
+**Bug 3 — Radio buttons com valores errados (bug funcional crítico):**
+- Radio buttons armazenavam `'Cliente'` e `'Prestador de serviços'` no estado
+- A conversão `userType === 'CLIENTE' ? 'CLIENTE' : 'PROFISSIONAL'` nunca era verdadeira para esses valores
+- Resultado: **todo usuário era cadastrado como `PROFISSIONAL`**, independente da seleção
+- Corrigido: radio buttons agora armazenam `'CLIENTE'` e `'PROFISSIONAL'` diretamente; conversão simplificada para `userType as 'CLIENTE' | 'PROFISSIONAL'`
+
+**Bug 4 — `useEffect` vazio e import desnecessário:**
+- `useEffect(() => {}, [])` sem corpo e `useEffect` importado sem uso
+- Corrigido: removidos ambos
+
+---
+
+### Arquivo: `front-react/src/contexts/AuthContext.tsx`
+
+**Bug 5 — Tipo de retorno incorreto em `login` e `cadastrar`:**
+- Ambas as funções tinham tipo `Promise<void>` no contrato `AuthContextType`, mas retornavam `resposta.usuario`
+- `LoginUser.tsx` usava o valor de retorno (`const usuarioLogado = await login(...)`) para redirecionar o usuário — código que TypeScript rejeitava silenciosamente
+- Corrigido: tipo atualizado para `Promise<Usuario>` em ambas
+
+---
+
+### Arquivo: `front-react/tsconfig.json`
+
+**Bug 6 — Include apontando para o backend:**
+- `"include": ["src", "../src/controllers/professional"]` incluía código do backend no projeto frontend
+- Criava acoplamento incorreto entre projetos; podia poluir a checagem de tipos
+- Corrigido: → `"include": ["src"]`
+
+---
+
+### Arquivo: `front-react/src/lib/types.ts`
+
+**Bug 7 — `ProposalStatus` divergia do schema do banco:**
+- Tipo frontend: `'PENDENTE' | 'ABERTA' | 'EM_ANDAMENTO' | 'CONCLUIDA' | 'CANCELADA'`
+- Schema real (`schema.ts`): `'PENDENTE' | 'ACEITA' | 'RECUSADA' | 'CANCELADA' | 'EM_ANDAMENTO' | 'FINALIZADA' | 'AVALIADA'`
+- Valores como `'ABERTA'` e `'CONCLUIDA'` nunca existiriam no banco, causando inconsistências silenciosas
+- Corrigido: `ProposalStatus` e `ProposalProfessionalStatus` alinhados com o schema
+
+---
+
+### Arquivo: `front-react/src/pages/professional/Home.tsx`
+
+**Bug 8 — `setLocation` chamado sem estado correspondente:**
+- `location` era declarada como `const` mas `handleEditLocation` chamava `setLocation(newLocation)`
+- Erro TypeScript: `Cannot find name 'setLocation'`
+- Corrigido: convertida para `const [location, setLocation] = useState('Brasília - DF')`
+
+---
+
+### Resultado
+
+Após todas as correções, `tsc --noEmit` passa **sem nenhum erro**.

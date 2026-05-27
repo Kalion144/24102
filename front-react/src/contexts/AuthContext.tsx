@@ -20,8 +20,8 @@ interface Usuario {
 interface AuthContextType {
   usuario: Usuario | null;
   loading: boolean;
-  login: (email: string, senha: string) => Promise<void>;
-  cadastrar: (data: any) => Promise<void>;
+  login: (email: string, senha: string) => Promise<Usuario>;
+  cadastrar: (data: any) => Promise<Usuario>;
   logout: () => Promise<void>;
 }
 

@@ -33,7 +33,7 @@ const Home = () => {
   }, []);
 
   const userName = usuario?.nome || 'João Silva';
-  const location = 'Brasília - DF';
+  const [location, setLocation] = useState('Brasília - DF');
 
   const handleCardClick = (servico) => {
     navigate(`/professional/service-details/${servico.id}`, {
