@@ -19,7 +19,9 @@ export async function loginUser(data: LoginData) {
     credentials: 'include',
     body: JSON.stringify(data),
   });
-  return res.json();
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.erro ?? 'Erro ao fazer login');
+  return json;
 }
 
 export async function logoutUser() {

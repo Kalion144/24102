@@ -49,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, senha: string) => {
     const resposta = await loginUser({ email, senha });
+    if (!resposta.usuario) throw new Error('Resposta inválida do servidor');
     setUsuario(resposta.usuario);
     return resposta.usuario;
   };
