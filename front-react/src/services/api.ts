@@ -20,7 +20,7 @@ export async function loginUser(data: LoginData) {
     body: JSON.stringify(data),
   });
   const json = await res.json();
-  if (!res.ok) throw new Error(json.erro ?? 'Erro ao fazer login');
+  if (!res.ok) throw new Error(json.detalhes ?? json.erro ?? 'Erro ao fazer login');
   return json;
 }
 
