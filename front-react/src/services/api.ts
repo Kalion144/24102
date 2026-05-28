@@ -115,6 +115,16 @@ export async function criarProposta(data: Record<string, unknown>) {
   return json;
 }
 
+export async function deletarProposta(id: number | string) {
+  const res = await fetch(`${API_URL}/client/proposals/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.erro ?? 'Erro ao excluir proposta');
+  return json;
+}
+
 export async function atualizarProposta(id: number | string, data: Record<string, unknown>) {
   const res = await fetch(`${API_URL}/client/proposals/${id}`, {
     method: 'PUT',

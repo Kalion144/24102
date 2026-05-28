@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { listarMinhasPropostas } from '../../services/api';
+import { listarMinhasPropostasProfissional } from '../../services/api';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -21,9 +21,9 @@ const Home = () => {
   useEffect(() => {
     const carregarDados = async () => {
       try {
-        const dados = await listarMinhasPropostas();
-        if (dados.propostas) {
-          setServicosDisponiveis(dados.propostas);
+        const dados = await listarMinhasPropostasProfissional();
+        if (Array.isArray(dados)) {
+          setServicosDisponiveis(dados);
         }
       } catch (error) {
         console.error(error);
@@ -32,7 +32,7 @@ const Home = () => {
     carregarDados();
   }, []);
 
-  const userName = usuario?.nome || 'João Silva';
+  const userName = usuario?.nome || 'Profissional';
   const [location, setLocation] = useState('Brasília - DF');
 
   const handleCardClick = (servico) => {
