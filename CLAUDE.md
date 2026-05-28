@@ -167,12 +167,23 @@ Principais bugs resolvidos em 27/05/2026:
 
 ---
 
-## Status Atual
+## Status Atual — atualizado em 27/05/2026
 
 | Área | Status |
 |------|--------|
 | Backend (auth, CRUD, middleware) | Completo |
 | Frontend (estrutura, rotas, contexto) | Completo |
-| Integração Frontend ↔ Backend | Pendente |
-| Testes de fluxo completo | Pendente |
+| Integração Frontend ↔ Backend | Funcional |
+| Login cliente / prestador | Funcionando |
+| Logout (todas as páginas) | Corrigido |
+| Listagem, criação, edição e exclusão de pedidos | Implementado |
+| Banco de dados Turso (todas as tabelas e colunas) | Sincronizado |
 | `tsc --noEmit` (frontend) | Passando sem erros |
+| Testes de fluxo completo | Pendente |
+
+## Rotas da API — adições em 27/05/2026
+
+| Método | Endpoint | Auth | Descrição |
+|--------|----------|------|-----------|
+| PUT | `/client/proposals/:id` | ✓ | Editar proposta (só `PENDENTE`) |
+| DELETE | `/client/proposals/:id` | ✓ | Excluir proposta (`PENDENTE` ou `FINALIZADA`) |
