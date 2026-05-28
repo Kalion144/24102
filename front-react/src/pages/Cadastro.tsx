@@ -210,13 +210,7 @@ export default function Cadastro() {
         <div className="action-buttons">
           <button
             className="btn btn-outline"
-            onClick={() => {
-              setFullName('');
-              setEmail('');
-              setPassword('');
-              setUserType('');
-              setErrors({});
-            }}
+            onClick={() => navigate('/')}
           >
             Cancelar
           </button>

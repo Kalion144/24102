@@ -2,14 +2,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { listarMinhasPropostas } from '../../services/api';
+import { listarMinhasPropostas, atualizarProposta } from '../../services/api';
 
 const Services = () => {
   const navigate = useNavigate();
-  const { usuario } = useAuth();
+  const { usuario, logout } = useAuth();
   const [servicos, setServicos] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editForm, setEditForm] = useState({ titulo: '', descricao: '', valor: '', prazo: '' });
+  const [salvando, setSalvando] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const toastTimeoutRef = useRef(null);
 
@@ -19,19 +22,7 @@ const Services = () => {
     toastTimeoutRef.current = setTimeout(() => setToastMessage(null), 3000);
   };
 
-  useEffect(() => {
-    const carregarDados = async () => {
-      try {
-        const dados = await listarMinhasPropostas();
-        if (dados.propostas) {
-          setServicos(dados.propostas);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    carregarDados();
-  }, []);
+  useEffect(() => { carregarServicos(); }, []);
 
   const openServiceModal = (servico) => {
     setSelectedService(servico);
@@ -44,8 +35,48 @@ const Services = () => {
   const handleUpdate = () => {
     showToast('🔄 Página atualizada!');
   };
+  const carregarServicos = async () => {
+    try {
+      const dados = await listarMinhasPropostas();
+      if (dados.propostas) setServicos(dados.propostas);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleCreateService = () => navigate('/client/post-service');
-  const handleEdit = () => showToast('✏️ Edição em breve');
+
+  const abrirEdicao = (servico) => {
+    setEditForm({
+      titulo: servico.titulo || '',
+      descricao: servico.descricao || '',
+      valor: servico.valor ?? '',
+      prazo: servico.prazo || '',
+    });
+    setSelectedService(servico);
+    setModalOpen(false);
+    setEditModalOpen(true);
+  };
+
+  const salvarEdicao = async () => {
+    if (!editForm.titulo.trim()) { showToast('❌ Título obrigatório'); return; }
+    setSalvando(true);
+    try {
+      await atualizarProposta(selectedService.id, {
+        titulo: editForm.titulo,
+        descricao: editForm.descricao,
+        valor: editForm.valor ? Number(editForm.valor) : null,
+        prazo: editForm.prazo,
+      });
+      showToast('✅ Pedido atualizado!');
+      setEditModalOpen(false);
+      await carregarServicos();
+    } catch (err) {
+      showToast(`❌ ${err instanceof Error ? err.message : 'Erro ao salvar'}`);
+    } finally {
+      setSalvando(false);
+    }
+  };
 
   const styles = `
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -92,7 +123,7 @@ const Services = () => {
       <div className="services-container">
         <div className="user-header">
           <div className="user-info">
-            <h2>Olá, João</h2>
+            <h2>Olá, {usuario?.nome?.split(' ')[0] || 'Cliente'}</h2>
             <p>Acompanhe seus pedidos</p>
           </div>
           <div className="user-actions">
@@ -101,10 +132,7 @@ const Services = () => {
             </button>
             <button
               className="icon-btn"
-              onClick={() => {
-                showToast('👋 Logout');
-                setTimeout(() => navigate('/'), 1500);
-              }}
+              onClick={async () => { await logout(); navigate('/login'); }}
             >
               <i className="fas fa-sign-out-alt"></i>
             </button>
@@ -207,7 +235,7 @@ const Services = () => {
                   </div>
                   <div>{selectedService.descricao}</div>
                   <div>Status: {selectedService.status}</div>
-                  <div>Valor sugerido: R$ {selectedService.preco}</div>
+                  <div>Valor sugerido: R$ {selectedService.valor}</div>
                   <div>Localização: {selectedService.localizacao}</div>
                   <button className="create-btn" onClick={handleEdit}>
                     Editar

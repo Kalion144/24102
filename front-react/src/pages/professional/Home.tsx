@@ -5,7 +5,7 @@ import { listarMinhasPropostas } from '../../services/api';
 
 const Home = () => {
   const navigate = useNavigate();
-  const { usuario } = useAuth();
+  const { usuario, logout } = useAuth();
   const [servicosDisponiveis, setServicosDisponiveis] = useState([]);
   const [toastMessage, setToastMessage] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
@@ -44,9 +44,9 @@ const Home = () => {
     const newLocation = prompt('Digite sua cidade e UF:', location);
     if (newLocation) setLocation(newLocation);
   };
-  const handleLogout = () => {
-    showToastMessage('🔐 Logout realizado!');
-    setTimeout(() => navigate('/'), 800);
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
   };
 
   const styles = `
