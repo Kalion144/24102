@@ -78,7 +78,9 @@ export async function atualizarPerfilProfissional(
     credentials: 'include',
     body: JSON.stringify(data),
   });
-  return res.json();
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.erro ?? 'Erro ao atualizar perfil');
+  return json;
 }
 
 export async function atualizarPerfil(data: Record<string, unknown>) {

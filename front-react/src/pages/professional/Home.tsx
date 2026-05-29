@@ -33,16 +33,15 @@ const Home = () => {
   }, []);
 
   const userName = usuario?.nome || 'Profissional';
-  const [location, setLocation] = useState('Brasília - DF');
+  const location =
+    usuario?.perfilProfissional?.localizacao ||
+    usuario?.perfilProfissional?.cidade ||
+    'Localização não informada';
 
   const handleCardClick = (servico) => {
     navigate(`/professional/service-details/${servico.id}`, {
       state: { servico },
     });
-  };
-  const handleEditLocation = () => {
-    const newLocation = prompt('Digite sua cidade e UF:', location);
-    if (newLocation) setLocation(newLocation);
   };
   const handleLogout = async () => {
     await logout();
@@ -126,7 +125,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="edit-icon" onClick={handleEditLocation}>
+        <div className="edit-icon" onClick={() => navigate('/professional/profile')}>
           Alterar local
         </div>
       </div>
