@@ -41,265 +41,303 @@ const Home = () => {
   const location =
     usuario?.perfilProfissional?.localizacao ||
     usuario?.perfilProfissional?.cidade ||
-    'Localização não informada';
+    '';
 
   const handleInteresse = async (proposta: any) => {
-    if (proposta.jaInteressou) {
-      showToast('Você já demonstrou interesse nesta proposta', true);
-      return;
-    }
+    if (proposta.jaInteressou) return;
     try {
       await demonstrarInteresse(proposta.id);
-      setPropostas((prev) =>
-        prev.map((p) => p.id === proposta.id ? { ...p, jaInteressou: true } : p)
+      setPropostas(prev =>
+        prev.map(p => p.id === proposta.id ? { ...p, jaInteressou: true } : p)
       );
-      showToast('✅ Interesse registrado! O cliente será notificado.');
+      showToast('Interesse registrado! O cliente será notificado.');
     } catch (e: any) {
       showToast(e.message || 'Erro ao registrar interesse', true);
     }
   };
 
-  const styles = `
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #f4f6fc; font-family: 'Inter', sans-serif; color: #1e2e3e; }
-
-    .user-header {
-      width: 100%; background: white; padding: 16px 32px;
-      display: flex; justify-content: space-between; align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100;
-      flex-wrap: wrap; gap: 12px;
-    }
-    .user-info h2 { font-size: 1.3rem; font-weight: 700; color: #111827; margin-bottom: 3px; }
-    .user-location { color: #6b7280; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; }
-    .user-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    .icon-btn {
-      width: 42px; height: 42px; border: none; border-radius: 12px;
-      background: #f3f4f6; color: #374151;
-      display: inline-flex; align-items: center; justify-content: center;
-      font-size: 17px; transition: 0.2s; cursor: pointer;
-    }
-    .icon-btn:hover { background: #f97316; color: white; transform: translateY(-2px); }
-
-    .profile-card {
-      background: white; margin: 18px 20px; border-radius: 24px;
-      padding: 16px 22px; display: flex; align-items: center;
-      justify-content: space-between; flex-wrap: wrap; gap: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #eef2f8;
-    }
-    .profile-left { display: flex; align-items: center; gap: 14px; }
-    .avatar {
-      width: 48px; height: 48px; border-radius: 50%; background: #eef2fb;
-      display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
-      overflow: hidden; border: 2px solid #e2e8f0;
-    }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .prof-info h3 { font-size: 1.05rem; font-weight: 700; color: #1f3b4c; }
-    .prof-loc { display: flex; align-items: center; gap: 5px; color: #5f7d9c; font-size: 0.8rem; margin-top: 2px; }
-    .edit-loc-btn {
-      background: #f0f4fa; padding: 7px 14px; border-radius: 40px;
-      font-size: 0.78rem; font-weight: 600; color: #2c5a6e; cursor: pointer;
-      transition: 0.2s; border: none;
-    }
-    .edit-loc-btn:hover { background: #e2ecf7; }
-
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; }
-
-    .section-header {
-      display: flex; align-items: baseline; justify-content: space-between;
-      flex-wrap: wrap; gap: 8px; margin: 24px 0 16px;
-    }
-    .section-title { font-size: 1.3rem; font-weight: 700; color: #1f3b4c; }
-    .section-count {
-      font-size: 0.82rem; font-weight: 600; color: #5f7d9c;
-      background: #eef2fa; padding: 4px 12px; border-radius: 40px;
-    }
-
-    .proposals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
-
-    .proposal-card {
-      background: white; border-radius: 22px; padding: 20px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.05); border: 1.5px solid #eef2fa;
-      transition: all 0.22s; display: flex; flex-direction: column; gap: 12px;
-    }
-    .proposal-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.09); border-color: #c8d8ec; }
-
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-    .card-titulo { font-size: 1.05rem; font-weight: 700; color: #1f3b4c; flex: 1; }
-    .badge-novo { background: #fef3c7; color: #b45309; font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; white-space: nowrap; }
-
-    .card-cliente { font-size: 0.82rem; color: #5f7d9c; display: flex; align-items: center; gap: 5px; }
-    .card-desc { font-size: 0.87rem; color: #4b5563; line-height: 1.5; }
-
-    .card-meta { display: flex; flex-wrap: wrap; gap: 10px; }
-    .meta-pill {
-      background: #f0f4fa; border-radius: 40px; padding: 5px 12px;
-      font-size: 0.78rem; font-weight: 600; color: #374151;
-      display: flex; align-items: center; gap: 5px;
-    }
-    .meta-pill.green { background: #ecfdf5; color: #065f46; }
-    .meta-pill.orange { background: #fff7ed; color: #9a3412; }
-
-    .btn-interesse {
-      width: 100%; padding: 11px; border-radius: 14px; border: none;
-      font-weight: 700; font-size: 0.9rem; cursor: pointer;
-      transition: all 0.2s; font-family: inherit;
-    }
-    .btn-interesse.ativo {
-      background: linear-gradient(95deg, #1f4e5f, #2c7a6e);
-      color: white;
-    }
-    .btn-interesse.ativo:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
-    .btn-interesse.ja-interessou {
-      background: #ecfdf5; color: #065f46; border: 1.5px solid #6ee7b7; cursor: default;
-    }
-
-    .empty-state {
-      text-align: center; padding: 60px 20px; color: #6b7280;
-    }
-    .empty-state .icon { font-size: 3rem; margin-bottom: 16px; }
-    .empty-state p { font-size: 1rem; margin-bottom: 8px; }
-    .empty-state small { font-size: 0.82rem; color: #9ca3af; }
-
-    .skeleton { background: #eef2f9; border-radius: 22px; height: 200px; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-    .toast {
-      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
-      color: white; padding: 12px 24px; border-radius: 40px;
-      font-weight: 600; font-size: 0.9rem; z-index: 9999;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-      animation: slideUp 0.3s ease;
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-
-    @media (max-width: 640px) {
-      .user-header { padding: 14px 16px; }
-      .profile-card { margin: 12px 12px; }
-      .container { padding: 0 12px 40px; }
-      .proposals-grid { grid-template-columns: 1fr; }
-    }
-  `;
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return null;
+    try {
+      return new Date(dateStr).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+    } catch { return null; }
+  };
 
   const foto = usuario?.foto;
+
+  const styles = `
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f1f5f9; font-family: 'Inter', sans-serif; color: #0f172a; }
+
+    /* ── Header ── */
+    .header {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0 32px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #e0e7ff; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; border: 2px solid #c7d2fe; flex-shrink: 0;
+    }
+    .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .header-name { font-weight: 700; font-size: 0.95rem; color: #0f172a; }
+    .header-loc { font-size: 0.75rem; color: #64748b; margin-top: 1px; }
+    .header-nav { display: flex; align-items: center; gap: 4px; }
+    .nav-btn {
+      width: 38px; height: 38px; border: none; border-radius: 10px;
+      background: transparent; color: #64748b;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 16px; cursor: pointer; transition: all 0.18s;
+    }
+    .nav-btn:hover { background: #f1f5f9; color: #0f172a; }
+    .nav-btn.active { background: #eff6ff; color: #2563eb; }
+
+    /* ── Page layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 28px 20px 60px; }
+
+    /* ── Section header ── */
+    .section-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+    }
+    .section-bar h1 { font-size: 1.15rem; font-weight: 700; color: #0f172a; }
+    .count-badge {
+      background: #f1f5f9; border: 1px solid #e2e8f0;
+      color: #475569; font-size: 0.78rem; font-weight: 600;
+      padding: 4px 12px; border-radius: 40px;
+    }
+
+    /* ── Proposal list item ── */
+    .proposal-item {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 20px 22px;
+      margin-bottom: 12px;
+      display: flex; align-items: flex-start; gap: 18px;
+      transition: all 0.18s;
+    }
+    .proposal-item:hover { border-color: #cbd5e1; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .proposal-item.done { border-color: #bbf7d0; background: #f0fdf4; }
+
+    /* Left accent bar */
+    .item-accent {
+      width: 4px; min-height: 60px; border-radius: 4px;
+      background: linear-gradient(180deg, #3b82f6, #6366f1);
+      flex-shrink: 0; align-self: stretch;
+    }
+    .item-accent.done { background: #22c55e; }
+
+    /* Main content */
+    .item-body { flex: 1; min-width: 0; }
+    .item-title {
+      font-size: 1rem; font-weight: 700; color: #0f172a;
+      margin-bottom: 4px; line-height: 1.4;
+    }
+    .item-client {
+      font-size: 0.8rem; color: #64748b;
+      display: flex; align-items: center; gap: 5px; margin-bottom: 8px;
+    }
+    .item-desc {
+      font-size: 0.85rem; color: #475569; line-height: 1.55;
+      margin-bottom: 12px;
+    }
+    .item-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.75rem; font-weight: 600;
+      padding: 3px 10px; border-radius: 40px;
+    }
+    .tag-value { background: #ecfdf5; color: #166534; border: 1px solid #bbf7d0; }
+    .tag-prazo { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .tag-new   { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+
+    /* Right side CTA */
+    .item-cta { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; min-width: 140px; }
+    .posted-at { font-size: 0.72rem; color: #94a3b8; white-space: nowrap; }
+    .btn-interest {
+      padding: 9px 18px; border-radius: 10px; border: none;
+      font-weight: 700; font-size: 0.82rem; cursor: pointer;
+      transition: all 0.18s; font-family: inherit; white-space: nowrap;
+    }
+    .btn-interest.open {
+      background: #2563eb; color: white;
+    }
+    .btn-interest.open:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+    .btn-interest.sent {
+      background: #f0fdf4; color: #166534;
+      border: 1.5px solid #bbf7d0; cursor: default;
+    }
+
+    /* ── Skeletons ── */
+    .skel {
+      background: white; border: 1px solid #e2e8f0; border-radius: 16px;
+      padding: 20px 22px; margin-bottom: 12px; display: flex; gap: 18px;
+    }
+    .skel-bar { width: 4px; border-radius: 4px; background: #e2e8f0; }
+    .skel-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .skel-line { background: #e2e8f0; border-radius: 6px; animation: shimmer 1.4s infinite; }
+    @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:.45} }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center; padding: 64px 20px; color: #94a3b8;
+    }
+    .empty-icon { font-size: 2.8rem; margin-bottom: 14px; }
+    .empty p { font-size: 0.95rem; color: #64748b; }
+    .empty small { font-size: 0.82rem; margin-top: 6px; display: block; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%);
+      color: white; padding: 11px 22px; border-radius: 40px;
+      font-weight: 600; font-size: 0.88rem; z-index: 9999;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+      animation: up .25s ease;
+    }
+    @keyframes up {
+      from { opacity:0; transform:translateX(-50%) translateY(8px); }
+      to   { opacity:1; transform:translateX(-50%) translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .header { padding: 0 16px; }
+      .page { padding: 18px 12px 60px; }
+      .proposal-item { flex-direction: column; gap: 12px; }
+      .item-cta { flex-direction: row; align-items: center; min-width: auto; width: 100%; justify-content: space-between; }
+      .item-accent { display: none; }
+    }
+  `;
 
   return (
     <>
       <style>{styles}</style>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-      <div className="user-header">
-        <div className="user-info">
-          <h2>Olá, {userName.split(' ')[0]}</h2>
-          <div className="user-location">
-            <i className="fas fa-map-marker-alt" /> {location}
+      {/* Header compacto */}
+      <header className="header">
+        <div className="header-left">
+          <div className="header-avatar">
+            {foto ? <img src={foto} alt="" /> : '👤'}
+          </div>
+          <div>
+            <div className="header-name">{userName}</div>
+            {location && <div className="header-loc">📍 {location}</div>}
           </div>
         </div>
-        <div className="user-actions">
-          <button className="icon-btn" title="Home" onClick={() => navigate('/professional/home')}>
+        <nav className="header-nav">
+          <button className="nav-btn active" title="Início" onClick={() => navigate('/professional/home')}>
             <i className="fas fa-home" />
           </button>
-          <button className="icon-btn" title="Minhas propostas" onClick={() => navigate('/professional/proposals')}>
+          <button className="nav-btn" title="Minhas propostas" onClick={() => navigate('/professional/proposals')}>
             <i className="fas fa-briefcase" />
           </button>
-          <button className="icon-btn" title="Perfil" onClick={() => navigate('/professional/profile')}>
+          <button className="nav-btn" title="Perfil" onClick={() => navigate('/professional/profile')}>
             <i className="fas fa-user" />
           </button>
-          <button className="icon-btn" title="Sair" onClick={async () => { await logout(); navigate('/login'); }}>
+          <button className="nav-btn" title="Sair" onClick={async () => { await logout(); navigate('/login'); }}>
             <i className="fas fa-sign-out-alt" />
           </button>
-        </div>
-      </div>
+        </nav>
+      </header>
 
-      <div className="profile-card">
-        <div className="profile-left">
-          <div className="avatar">
-            {foto ? <img src={foto} alt="foto" /> : '👤'}
-          </div>
-          <div className="prof-info">
-            <h3>{userName}</h3>
-            <div className="prof-loc">
-              <span>📍</span> {location}
-            </div>
-          </div>
-        </div>
-        <button className="edit-loc-btn" onClick={() => navigate('/professional/profile')}>
-          Alterar local
-        </button>
-      </div>
-
-      <div className="container">
-        <div className="section-header">
-          <div className="section-title">🔧 Propostas Disponíveis</div>
+      <main className="page">
+        <div className="section-bar">
+          <h1>Propostas disponíveis</h1>
           {!loading && (
-            <span className="section-count">
-              {propostas.length} proposta{propostas.length !== 1 ? 's' : ''} aberta{propostas.length !== 1 ? 's' : ''}
+            <span className="count-badge">
+              {propostas.length} {propostas.length === 1 ? 'proposta aberta' : 'propostas abertas'}
             </span>
           )}
         </div>
 
         {loading ? (
-          <div className="proposals-grid">
-            {[1, 2, 3].map((i) => <div key={i} className="skeleton" />)}
-          </div>
+          <>
+            {[180, 140, 160].map((h, i) => (
+              <div key={i} className="skel">
+                <div className="skel-bar" style={{ height: h }} />
+                <div className="skel-body">
+                  <div className="skel-line" style={{ height: 18, width: '60%' }} />
+                  <div className="skel-line" style={{ height: 13, width: '35%' }} />
+                  <div className="skel-line" style={{ height: 13, width: '90%' }} />
+                  <div className="skel-line" style={{ height: 13, width: '75%' }} />
+                </div>
+              </div>
+            ))}
+          </>
         ) : propostas.length === 0 ? (
-          <div className="empty-state">
-            <div className="icon">📋</div>
+          <div className="empty">
+            <div className="empty-icon">📋</div>
             <p>Nenhuma proposta disponível no momento</p>
-            <small>Volte mais tarde — clientes publicam novas propostas frequentemente.</small>
+            <small>Clientes publicam novas propostas frequentemente — volte em breve.</small>
           </div>
         ) : (
-          <div className="proposals-grid">
-            {propostas.map((p) => (
-              <div key={p.id} className="proposal-card">
-                <div className="card-top">
-                  <div className="card-titulo">{p.titulo}</div>
-                  <span className="badge-novo">⭐ Novo</span>
-                </div>
+          propostas.map(p => (
+            <div key={p.id} className={`proposal-item ${p.jaInteressou ? 'done' : ''}`}>
+              <div className={`item-accent ${p.jaInteressou ? 'done' : ''}`} />
 
-                <div className="card-cliente">
-                  <i className="fas fa-user-circle" /> {p.clienteNome}
+              <div className="item-body">
+                <div className="item-title">{p.titulo}</div>
+                <div className="item-client">
+                  <i className="fas fa-user-circle" />
+                  {p.clienteNome}
                 </div>
 
                 {p.descricao && (
-                  <div className="card-desc">
-                    {p.descricao.length > 120 ? p.descricao.slice(0, 120) + '…' : p.descricao}
+                  <div className="item-desc">
+                    {p.descricao.length > 160
+                      ? p.descricao.slice(0, 160) + '…'
+                      : p.descricao}
                   </div>
                 )}
 
-                <div className="card-meta">
+                <div className="item-tags">
+                  {!p.jaInteressou && <span className="tag tag-new">Novo</span>}
                   {p.valor && (
-                    <span className="meta-pill green">
+                    <span className="tag tag-value">
                       💰 R$ {Number(p.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </span>
                   )}
                   {p.prazo && (
-                    <span className="meta-pill">
+                    <span className="tag tag-prazo">
                       📅 {p.prazo}
                     </span>
                   )}
                   {!p.valor && !p.prazo && (
-                    <span className="meta-pill orange">A combinar</span>
+                    <span className="tag" style={{ background: '#f8fafc', color: '#64748b', border: '1px solid #e2e8f0' }}>
+                      Valor a combinar
+                    </span>
                   )}
                 </div>
+              </div>
 
+              <div className="item-cta">
+                {p.created_at && (
+                  <span className="posted-at">
+                    {formatDate(p.created_at) ?? ''}
+                  </span>
+                )}
                 <button
-                  className={`btn-interesse ${p.jaInteressou ? 'ja-interessou' : 'ativo'}`}
+                  className={`btn-interest ${p.jaInteressou ? 'sent' : 'open'}`}
                   onClick={() => handleInteresse(p)}
                   disabled={p.jaInteressou}
                 >
-                  {p.jaInteressou ? '✓ Interesse registrado' : 'Tenho interesse'}
+                  {p.jaInteressou ? '✓ Interesse enviado' : 'Tenho interesse'}
                 </button>
               </div>
-            ))}
-          </div>
+            </div>
+          ))
         )}
-      </div>
+      </main>
 
       {toastMsg && (
-        <div className="toast" style={{ background: toastError ? '#b91c1c' : '#1f6e5c' }}>
+        <div className="toast" style={{ background: toastError ? '#dc2626' : '#16a34a' }}>
           {toastMsg}
         </div>
       )}
